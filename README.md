@@ -65,6 +65,11 @@
 十六、IBasePresenter：逻辑层基类
 
 	start() 逻辑层开始执行方法；
+
+十七、AnimationUtils：动画工具类
+
+    startShakeByProperty(View view, float scaleSmall, float scaleLarge, float shakeDegrees, long duration) 静态方法，设置震动样式；
+    runLayoutAnimation(final View view, int layoutId, Animation.AnimationListener listener) 静态方法，根据自己配置的xml文件执行动画；
 	
 
 	
