@@ -78,7 +78,7 @@ public class LogUtils {
     }
 
     /** 以级别为 e 的形式输出LOG */
-    public static void e(String msg) {
+        public static void e(String msg) {
         if (mDebuggable >= LEVEL_ERROR) {
             Log.e(mTag, msg);
         }
