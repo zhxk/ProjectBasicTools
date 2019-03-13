@@ -71,7 +71,7 @@
     startShakeByProperty(View view, float scaleSmall, float scaleLarge, float shakeDegrees, long duration) 静态方法，设置震动样式；
     runLayoutAnimation(final View view, int layoutId, Animation.AnimationListener listener) 静态方法，根据自己配置的xml文件执行动画；
     
-十八、CommonAdapter：常用的适配器，引用杨大神的加载更多和header加载
+十八、CommonAdapter：常用的适配器，引用张弘扬大神的加载更多和header加载
 
 	
 	
