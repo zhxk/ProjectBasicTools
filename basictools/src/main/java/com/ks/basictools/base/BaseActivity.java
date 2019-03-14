@@ -13,9 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.ks.basictools.ActivityCollector;
+import com.ks.basictools.AppManager;
 import com.ks.basictools.R;
 import com.ks.basictools.publicView.SlideBackLayout;
-import com.ks.basictools.utils.ActivityUtil;
 
 /**
  * Date:2019/2/20
@@ -41,8 +42,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             //设置状态栏的颜色
             getWindow().setStatusBarColor(getResources().getColor(R.color.white));
         }
-        // 添加到Activity工具类
-        ActivityUtil.getInstance().addActivity(this);
+        //添加到Activity管理
+        ActivityCollector.addActivity(this, getClass());
+        //将Activity实例添加到AppManager的堆栈
+        AppManager.getAppManager().addActivity(this);
     }
 
     @Override
@@ -59,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         // Activity销毁时，提示系统回收
         System.gc();
         // 移除Activity
-        ActivityUtil.getInstance().removeActivity(this);
+        ActivityCollector.removeActivity(this);
         super.onDestroy();
     }
 
@@ -68,7 +71,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 点击手机上的返回键，返回上一层
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             // 移除Activity
-            ActivityUtil.getInstance().removeActivity(this);
+            ActivityCollector.removeActivity(this);
             this.finish();
         }
         return super.onKeyDown(keyCode, event);
