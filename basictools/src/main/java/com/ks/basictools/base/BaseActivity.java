@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.ks.basictools.R;
+import com.ks.basictools.publicView.SlideBackLayout;
 import com.ks.basictools.utils.ActivityUtil;
 
 /**
@@ -25,6 +26,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        /*侧滑返回 在 super.onCreate(savedInstanceState);之前调用此方法*/
+        new SlideBackLayout(this).attach2Activity(this, null);
         super.onCreate(savedInstanceState);
         // 隐藏标题栏
         if (getSupportActionBar() != null)
