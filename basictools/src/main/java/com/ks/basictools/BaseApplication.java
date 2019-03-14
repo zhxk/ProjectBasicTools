@@ -7,6 +7,7 @@ import android.net.Network;
 import android.net.NetworkRequest;
 import android.os.Build;
 
+import com.ks.basictools.utils.ActivityStackUtil;
 import com.ks.basictools.utils.LogUtils;
 import com.ks.basictools.utils.ToastUtil;
 
@@ -27,6 +28,8 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //activity的侧滑返回
+        ActivityStackUtil.getInstance().init(this);
         /*网络改变监听*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
