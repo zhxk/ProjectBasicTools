@@ -9,20 +9,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ks.basictools.R;
-import com.ks.basictools.R2;
 import com.ks.basictools.base.BaseActivity;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class TitleVarView extends BaseActivity {
     private TitleBarOnRightClickListener mRight;
     private TitleBarOnLeftBackClickListener mLeftBack;
 
-    @BindView(R2.id.root_layout)
-    RelativeLayout root_layout;
-    @BindView(R2.id.ll_toolbar)
-    View ll_toolbar;
+    private RelativeLayout root_layout;
+    private View ll_toolbar;
 
     private RelativeLayout rl_full;
     private TextView tv_left_back;
@@ -44,7 +38,8 @@ public class TitleVarView extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.titlebar);
-        ButterKnife.bind(this);
+        root_layout = findViewById(R.id.root_layout);
+        ll_toolbar = findViewById(R.id.ll_toolbar);
     }
 
     /**
