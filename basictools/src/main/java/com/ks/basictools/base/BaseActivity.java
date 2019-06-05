@@ -1,8 +1,11 @@
 package com.ks.basictools.base;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,12 +14,19 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.ks.basictools.ActivityCollector;
 import com.ks.basictools.AppManager;
 import com.ks.basictools.R;
+import com.ks.basictools.overView.LoadingDialog;
 import com.ks.basictools.publicView.SlideBackLayout;
+import com.ks.basictools.utils.DisplayUtils;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Date:2019/2/20
@@ -24,6 +34,9 @@ import com.ks.basictools.publicView.SlideBackLayout;
  * Description：BaseActivity是所有Activity的基类，把一些公共的方法放到里面，如基础样式设置，权限封装等
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
+    /*全局加载中Dialog*/
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +59,160 @@ public abstract class BaseActivity extends AppCompatActivity {
         ActivityCollector.addActivity(this, getClass());
         //将Activity实例添加到AppManager的堆栈
         AppManager.getAppManager().addActivity(this);
+        //全局加载中···
+        mLoadingDialog = LoadingDialog.getInstance();
+    }
+
+    /**
+     * 设置状态栏透明
+     * @param isTrans 是否透明
+     * @param isUIBlack 文字和图标颜色是否为深色
+     */
+    public void setStatusBarTrans(boolean isTrans,boolean isUIBlack) {
+        if (isTrans) {
+            /*设置状态栏*/
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                View decorView = getWindow().getDecorView();
+                //View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR：设置状态栏中的文字颜色和图标颜色为深色，不设置默认为白色，需要android系统6.0以上。
+                if (isUIBlack) {
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                } else {
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                }
+                //设置状态栏的颜色
+                getWindow().setStatusBarColor(Color.TRANSPARENT);
+            }
+        } else {
+            /*设置状态栏*/
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                View decorView = getWindow().getDecorView();
+                //状态栏中的文字颜色和图标颜色为深色，需要android系统6.0以上，而且目前只有一种可以修改（一种是深色，一种是浅色即白色）
+                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                //设置状态栏的颜色
+                getWindow().setStatusBarColor(getResources().getColor(R.color.white));
+            }
+        }
+    }
+
+    /**
+     * Description：显示加载中。。。
+     */
+    public void showLoading() {
+        if (!AppManager.getAppManager().currentActivity().isFinishing()) {
+            mLoadingDialog.show();
+        }
+    }
+
+    /**
+     * Description：监听收起或者展开评论输入键盘
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_UP:
+                //触摸其他地方，关闭输入框
+                DisplayUtils.hideInputWhenTouchOtherView(this, ev, null);
+                break;
+        }
+        // 必不可少，否则所有的组件都不会有TouchEvent了
+        if (getWindow().superDispatchTouchEvent(ev)) {
+            return true;
+        }
+        return onTouchEvent(ev);
+    }
+
+    /**
+     * Description：关掉加载中。。。
+     */
+    public void dismissLoading() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+    }
+
+    public void startAct(Context packageContext, Class<?> cls) {
+        startAct(packageContext, cls, 0, null, 0, 0);
+    }
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE) {
+        startAct(packageContext, cls, RESULT_CODE, null, 0, 0);
+    }
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list) {
+        startAct(packageContext, cls, RESULT_CODE, list, 0, 0);
+    }
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list, int enterAnim) {
+        startAct(packageContext, cls, RESULT_CODE, list, enterAnim, 0);
+    }
+    /**
+     * 跳转activity
+     * 注：跳转默认动画，从下往上进入Activity
+     * @param packageContext 不解释
+     * @param cls 目标activity类
+     * @param RESULT_CODE 跳转返回code
+     * @param list 参数list
+     * @param enterAnim 打开activity动画
+     * @param exitAnim 关闭activity动画
+     */
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list, int enterAnim, int exitAnim) {
+        Intent intent = new Intent(packageContext, cls);
+        //循环添加参数
+        if (list != null && list.size() != 0) {
+            for (Map<String, Object> map : list) {
+                for (String k : map.keySet()) {
+                    if (map.get(k) instanceof Boolean) {
+                        intent.putExtra(k, (boolean) map.get(k));
+                    } else if (map.get(k) instanceof Byte) {
+                        intent.putExtra(k, (byte) map.get(k));
+                    } else if (map.get(k) instanceof String) {
+                        intent.putExtra(k, (String) map.get(k));
+                    } else if (map.get(k) instanceof Integer) {
+                        intent.putExtra(k, (int) map.get(k));
+                    } else if (map.get(k) instanceof Long) {
+                        intent.putExtra(k, (long) map.get(k));
+                    } else if (map.get(k) instanceof Double) {
+                        intent.putExtra(k, (double) map.get(k));
+                    } else if (map.get(k) instanceof Float) {
+                        intent.putExtra(k, (float) map.get(k));
+                    } else if (map.get(k) instanceof Serializable) {
+                        intent.putExtra(k, (Serializable) map.get(k));
+                    }
+                }
+            }
+        }
+        //设置回调
+        if (RESULT_CODE == 0) {
+            AppManager.getAppManager().currentActivity().startActivity(intent);
+        } else {
+            AppManager.getAppManager().currentActivity().startActivityForResult(intent, RESULT_CODE);
+        }
+        //自定义跳转动画
+        if (enterAnim != 0 || exitAnim != 0) {
+            overridePendingTransition(enterAnim, exitAnim);
+        } else {
+            overridePendingTransition(R.anim.alpha_in, 0);
+        }
+    }
+
+    public void finishAct() {
+        finishAct(0, 0);
+    }
+    public void finishAct(int exitAnim) {
+        finishAct(0, exitAnim);
+    }
+    /**
+     * 退出activity
+     *
+     * 注：跳转默认动画，从上往下离开Activity
+     * @param enterAnim 进入动画
+     * @param exitAnim 退出动画
+     */
+    public void finishAct(int enterAnim, int exitAnim) {
+        AppManager.getAppManager().finishActivity();
+        //自定义跳转动画
+        if (enterAnim != 0 || exitAnim != 0) {
+            overridePendingTransition(enterAnim, exitAnim);
+        } else {
+            overridePendingTransition(0, R.anim.alpha_out);
+        }
     }
 
     @Override
@@ -63,6 +230,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         System.gc();
         // 移除Activity
         ActivityCollector.removeActivity(this);
+        //销毁加载中控件
+        dismissLoading();
         super.onDestroy();
     }
 
