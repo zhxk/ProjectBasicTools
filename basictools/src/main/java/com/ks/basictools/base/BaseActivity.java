@@ -241,7 +241,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             // 移除Activity
             ActivityCollector.removeActivity(this);
-            this.finish();
+            finishAct();
         }
         return super.onKeyDown(keyCode, event);
     }
