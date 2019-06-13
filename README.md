@@ -1,6 +1,10 @@
 # ProjectBasicTools
 
 版本说明
+1.1.4版本：
+
+	1、添加了ToastKs；
+	2、封装了OkHttpUtil为继承式调用；
 
 1.1.3版本：
 
