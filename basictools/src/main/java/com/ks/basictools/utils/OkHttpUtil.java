@@ -16,7 +16,10 @@ import java.util.Map;
 import okhttp3.Call;
 
 /**
- * Created by Administrator on 2018/4/2.
+ * 使用方式：1、继承OkHttpUtil；
+ *           2、重写getBaseUtl()；
+ *           3、重写getStringCallBack();
+ *           4、获取对象实例后，调用对应的请求方法；
  */
 public abstract class OkHttpUtil {
     private StringBuffer log = new StringBuffer();
