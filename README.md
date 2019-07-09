@@ -1,6 +1,10 @@
 # ProjectBasicTools
 
 版本说明
+1.1.6版本：
+
+	1、修改finishAct()调用异常的问题；
+
 1.1.4版本：
 
 	1、添加了ToastKs；
