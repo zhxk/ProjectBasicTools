@@ -47,8 +47,8 @@ public class AppManager {
     public void finishActivity(){
         Activity activity=activityStack.lastElement();
         if(activity!=null){
+            activityStack.remove(activity);
             activity.finish();
-            activity=null;
         }
     }
     /**
@@ -58,7 +58,6 @@ public class AppManager {
         if(activity!=null){
             activityStack.remove(activity);
             activity.finish();
-            activity=null;
         }
     }
     /**
@@ -67,6 +66,7 @@ public class AppManager {
     public void finishActivity(Class<?> cls){
         for (Activity activity : activityStack) {
             if(activity.getClass().equals(cls) ){
+                activityStack.remove(activity);
                 finishActivity(activity);
             }
         }
