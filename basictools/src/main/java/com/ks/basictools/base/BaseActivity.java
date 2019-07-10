@@ -136,6 +136,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE) {
         startAct(packageContext, cls, RESULT_CODE, null, 0, 0);
     }
+    public void startAct(Context packageContext, Class<?> cls, List<Map<String, Object>> list) {
+        startAct(packageContext, cls, 0, list, 0, 0);
+    }
     public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list) {
         startAct(packageContext, cls, RESULT_CODE, list, 0, 0);
     }
@@ -178,6 +181,38 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             }
         }
+        //设置回调
+        if (RESULT_CODE == 0) {
+            AppManager.getAppManager().currentActivity().startActivity(intent);
+        } else {
+            AppManager.getAppManager().currentActivity().startActivityForResult(intent, RESULT_CODE);
+        }
+        //自定义跳转动画
+        if (enterAnim != 0 || exitAnim != 0) {
+            overridePendingTransition(enterAnim, exitAnim);
+        } else {
+            overridePendingTransition(R.anim.alpha_in, 0);
+        }
+    }
+
+    public void startAct(Intent intent) {
+        startAct(intent, 0, 0, 0);
+    }
+    public void startAct(Intent intent, int RESULT_CODE) {
+        startAct(intent, RESULT_CODE, 0, 0);
+    }
+    public void startAct(Intent intent, int enterAnim, int exitAnim) {
+        startAct(intent, 0, enterAnim, exitAnim);
+    }
+    /**
+     * 跳转activity
+     * 注：跳转默认动画，从下往上进入Activity
+     * @param intent intent参数
+     * @param RESULT_CODE 回调参数
+     * @param enterAnim 进入动画
+     * @param exitAnim 退出动画
+     */
+    public void startAct(Intent intent, int RESULT_CODE,  int enterAnim, int exitAnim) {
         //设置回调
         if (RESULT_CODE == 0) {
             AppManager.getAppManager().currentActivity().startActivity(intent);
