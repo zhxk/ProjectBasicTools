@@ -68,6 +68,7 @@ public class AppManager {
             if(activity.getClass().equals(cls) ){
 //                activityStack.remove(activity);
                 finishActivity(activity);
+                break;
             }
         }
     }
