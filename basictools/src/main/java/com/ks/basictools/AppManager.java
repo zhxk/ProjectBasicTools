@@ -66,7 +66,7 @@ public class AppManager {
     public void finishActivity(Class<?> cls){
         for (Activity activity : activityStack) {
             if(activity.getClass().equals(cls) ){
-                activityStack.remove(activity);
+//                activityStack.remove(activity);
                 finishActivity(activity);
             }
         }
