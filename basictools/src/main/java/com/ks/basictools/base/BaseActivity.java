@@ -65,35 +65,41 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 设置状态栏是否全屏
-     *
-     * @param isTrans         true：透明；false：不透明
+     * @param isFull         true：全屏；false：非全屏
      * @param isUIBlack       true：图标文字为深色；false：图标文字为亮色
      * @param backgroundColor 状态栏背景色 R.color.xxx
      */
-    public void setStatusBarTrans(boolean isTrans, boolean isUIBlack, int backgroundColor) {
+    public void setStatusBar(boolean isFull, boolean isUIBlack, int backgroundColor) {
         /*设置状态栏*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View decorView = getWindow().getDecorView();
+            int vis;
             //View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR：设置状态栏中的文字颜色和图标颜色为深色，不设置默认为白色，需要android系统6.0以上。
-            if (isUIBlack) {
-                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            if (isFull) {
+                if (isUIBlack) {
+                    vis = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                } else {
+                    vis = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_VISIBLE;
+                }
             } else {
-                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                if (isUIBlack) {
+                    vis = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                } else {
+                    vis = View.SYSTEM_UI_FLAG_VISIBLE;
+                }
             }
+            decorView.setSystemUiVisibility(vis);
             if (backgroundColor != 0) {
                 //设置状态栏规定的颜色
                 getWindow().setStatusBarColor(getResources().getColor(backgroundColor));
-            } else if (isTrans) {
-                //设置状态栏的背景颜色透明
-                getWindow().setStatusBarColor(Color.TRANSPARENT);
             } else {
                 //设置状态栏的默认背景颜色为白色
                 getWindow().setStatusBarColor(getResources().getColor(R.color.white));
             }
         }
     }
-    public void setStatusBarTrans(boolean isTrans, boolean isUIBlack) {
-        setStatusBarTrans(isTrans, isUIBlack, 0);
+    public void setStatusBar(boolean isFull, boolean isUIBlack) {
+        setStatusBar(isFull, isUIBlack, 0);
     }
 
     /**
@@ -140,15 +146,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         startAct(packageContext, cls, RESULT_CODE, null, 0, 0);
     }
 
-    public void startAct(Context packageContext, Class<?> cls, List<Map<String, Object>> list) {
+    public void startAct(Context packageContext, Class<?>
+            cls, List<Map<String, Object>> list) {
         startAct(packageContext, cls, 0, list, 0, 0);
     }
 
-    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list) {
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<
+            Map<String, Object>> list) {
         startAct(packageContext, cls, RESULT_CODE, list, 0, 0);
     }
 
-    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list, int enterAnim) {
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<
+            Map<String, Object>> list, int enterAnim) {
         startAct(packageContext, cls, RESULT_CODE, list, enterAnim, 0);
     }
 
@@ -163,7 +172,8 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param enterAnim      打开activity动画
      * @param exitAnim       关闭activity动画
      */
-    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list, int enterAnim, int exitAnim) {
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<
+            Map<String, Object>> list, int enterAnim, int exitAnim) {
         Intent intent = new Intent(packageContext, cls);
         //循环添加参数
         if (list != null && list.size() != 0) {
@@ -323,7 +333,8 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param grantResults 结果集
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         doRequestPermissionsResult(requestCode, grantResults);
     }
