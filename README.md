@@ -1,6 +1,11 @@
 # ProjectBasicTools
 
 版本说明
+
+1.2.0版本：
+	
+	1、完善ToastKs类，第一个和第二个Toast相距很短的情况下显示不重叠，区分更明显；
+
 1.1.6版本：
 
 	1、修改finishAct()调用异常的问题；
