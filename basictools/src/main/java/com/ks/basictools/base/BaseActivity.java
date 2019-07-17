@@ -64,41 +64,35 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * 设置状态栏是否全屏透明
-     * @param isTrans true：透明；false：不透明
-     * @param isUIBlack true：图标文字为深色；false：图标文字为亮色
+     * 设置状态栏是否全屏
+     *
+     * @param isTrans         true：透明；false：不透明
+     * @param isUIBlack       true：图标文字为深色；false：图标文字为亮色
      * @param backgroundColor 状态栏背景色 R.color.xxx
      */
     public void setStatusBarTrans(boolean isTrans, boolean isUIBlack, int backgroundColor) {
-        if (isTrans) {
-            /*设置状态栏*/
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                View decorView = getWindow().getDecorView();
-                //View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR：设置状态栏中的文字颜色和图标颜色为深色，不设置默认为白色，需要android系统6.0以上。
-                if (isUIBlack) {
-                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                } else {
-                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                }
-                //设置状态栏的颜色
-                getWindow().setStatusBarColor(Color.TRANSPARENT);
+        /*设置状态栏*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decorView = getWindow().getDecorView();
+            //View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR：设置状态栏中的文字颜色和图标颜色为深色，不设置默认为白色，需要android系统6.0以上。
+            if (isUIBlack) {
+                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            } else {
+                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             }
-        } else {
-            /*设置状态栏*/
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                View decorView = getWindow().getDecorView();
-                //状态栏中的文字颜色和图标颜色为深色，需要android系统6.0以上，而且目前只有一种可以修改（一种是深色，一种是浅色即白色）
-                decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                if (backgroundColor != 0) {
-                    getWindow().setStatusBarColor(getResources().getColor(backgroundColor));
-                } else {
-                    //设置状态栏的背景颜色
-                    getWindow().setStatusBarColor(getResources().getColor(R.color.white));
-                }
+            if (backgroundColor != 0) {
+                //设置状态栏规定的颜色
+                getWindow().setStatusBarColor(getResources().getColor(backgroundColor));
+            } else if (isTrans) {
+                //设置状态栏的背景颜色透明
+                getWindow().setStatusBarColor(Color.TRANSPARENT);
+            } else {
+                //设置状态栏的默认背景颜色为白色
+                getWindow().setStatusBarColor(getResources().getColor(R.color.white));
             }
         }
     }
-    public void setStatusBarTrans(boolean isTrans,boolean isUIBlack) {
+    public void setStatusBarTrans(boolean isTrans, boolean isUIBlack) {
         setStatusBarTrans(isTrans, isUIBlack, 0);
     }
 
@@ -141,27 +135,33 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void startAct(Context packageContext, Class<?> cls) {
         startAct(packageContext, cls, 0, null, 0, 0);
     }
+
     public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE) {
         startAct(packageContext, cls, RESULT_CODE, null, 0, 0);
     }
+
     public void startAct(Context packageContext, Class<?> cls, List<Map<String, Object>> list) {
         startAct(packageContext, cls, 0, list, 0, 0);
     }
+
     public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list) {
         startAct(packageContext, cls, RESULT_CODE, list, 0, 0);
     }
+
     public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list, int enterAnim) {
         startAct(packageContext, cls, RESULT_CODE, list, enterAnim, 0);
     }
+
     /**
      * 跳转activity
      * 注：跳转默认动画，从下往上进入Activity
+     *
      * @param packageContext 不解释
-     * @param cls 目标activity类
-     * @param RESULT_CODE 跳转返回code
-     * @param list 参数list
-     * @param enterAnim 打开activity动画
-     * @param exitAnim 关闭activity动画
+     * @param cls            目标activity类
+     * @param RESULT_CODE    跳转返回code
+     * @param list           参数list
+     * @param enterAnim      打开activity动画
+     * @param exitAnim       关闭activity动画
      */
     public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<Map<String, Object>> list, int enterAnim, int exitAnim) {
         Intent intent = new Intent(packageContext, cls);
@@ -206,21 +206,25 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void startAct(Intent intent) {
         startAct(intent, 0, 0, 0);
     }
+
     public void startAct(Intent intent, int RESULT_CODE) {
         startAct(intent, RESULT_CODE, 0, 0);
     }
+
     public void startAct(Intent intent, int enterAnim, int exitAnim) {
         startAct(intent, 0, enterAnim, exitAnim);
     }
+
     /**
      * 跳转activity
      * 注：跳转默认动画，从下往上进入Activity
-     * @param intent intent参数
+     *
+     * @param intent      intent参数
      * @param RESULT_CODE 回调参数
-     * @param enterAnim 进入动画
-     * @param exitAnim 退出动画
+     * @param enterAnim   进入动画
+     * @param exitAnim    退出动画
      */
-    public void startAct(Intent intent, int RESULT_CODE,  int enterAnim, int exitAnim) {
+    public void startAct(Intent intent, int RESULT_CODE, int enterAnim, int exitAnim) {
         //设置回调
         if (RESULT_CODE == 0) {
             AppManager.getAppManager().currentActivity().startActivity(intent);
@@ -238,15 +242,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void finishAct() {
         finishAct(0, 0);
     }
+
     public void finishAct(int exitAnim) {
         finishAct(0, exitAnim);
     }
+
     /**
      * 退出activity
-     *
+     * <p>
      * 注：跳转默认动画，从上往下离开Activity
+     *
      * @param enterAnim 进入动画
-     * @param exitAnim 退出动画
+     * @param exitAnim  退出动画
      */
     public void finishAct(int enterAnim, int exitAnim) {
         AppManager.getAppManager().finishActivity();
