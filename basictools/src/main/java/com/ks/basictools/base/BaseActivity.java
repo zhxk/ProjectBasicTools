@@ -64,11 +64,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * 设置状态栏透明
-     * @param isTrans 是否透明
-     * @param isUIBlack 文字和图标颜色是否为深色
+     * 设置状态栏是否全屏透明
+     * @param isTrans true：透明；false：不透明
+     * @param isUIBlack true：图标文字为深色；false：图标文字为亮色
+     * @param backgroundColor 状态栏背景色 R.color.xxx
      */
-    public void setStatusBarTrans(boolean isTrans,boolean isUIBlack) {
+    public void setStatusBarTrans(boolean isTrans, boolean isUIBlack, int backgroundColor) {
         if (isTrans) {
             /*设置状态栏*/
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,10 +89,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                 View decorView = getWindow().getDecorView();
                 //状态栏中的文字颜色和图标颜色为深色，需要android系统6.0以上，而且目前只有一种可以修改（一种是深色，一种是浅色即白色）
                 decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                //设置状态栏的颜色
-                getWindow().setStatusBarColor(getResources().getColor(R.color.white));
+                if (backgroundColor != 0) {
+                    getWindow().setStatusBarColor(getResources().getColor(backgroundColor));
+                } else {
+                    //设置状态栏的背景颜色
+                    getWindow().setStatusBarColor(getResources().getColor(R.color.white));
+                }
             }
         }
+    }
+    public void setStatusBarTrans(boolean isTrans,boolean isUIBlack) {
+        setStatusBarTrans(isTrans, isUIBlack, 0);
     }
 
     /**
