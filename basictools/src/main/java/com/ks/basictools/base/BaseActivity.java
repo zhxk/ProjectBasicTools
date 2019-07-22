@@ -147,18 +147,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void startAct(Context packageContext, Class<?>
-            cls, List<Map<String, Object>> list) {
-        startAct(packageContext, cls, 0, list, 0, 0);
+            cls, Map<String, Object> map) {
+        startAct(packageContext, cls, 0, map, 0, 0);
     }
 
-    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<
-            Map<String, Object>> list) {
-        startAct(packageContext, cls, RESULT_CODE, list, 0, 0);
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE,
+            Map<String, Object> map) {
+        startAct(packageContext, cls, RESULT_CODE, map, 0, 0);
     }
 
-    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<
-            Map<String, Object>> list, int enterAnim) {
-        startAct(packageContext, cls, RESULT_CODE, list, enterAnim, 0);
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE,
+            Map<String, Object> map, int enterAnim) {
+        startAct(packageContext, cls, RESULT_CODE, map, enterAnim, 0);
     }
 
     /**
@@ -168,34 +168,32 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param packageContext 不解释
      * @param cls            目标activity类
      * @param RESULT_CODE    跳转返回code
-     * @param list           参数list
+     * @param map           参数map集合
      * @param enterAnim      打开activity动画
      * @param exitAnim       关闭activity动画
      */
-    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE, List<
-            Map<String, Object>> list, int enterAnim, int exitAnim) {
+    public void startAct(Context packageContext, Class<?> cls, int RESULT_CODE,
+            Map<String, Object> map, int enterAnim, int exitAnim) {
         Intent intent = new Intent(packageContext, cls);
         //循环添加参数
-        if (list != null && list.size() != 0) {
-            for (Map<String, Object> map : list) {
-                for (String k : map.keySet()) {
-                    if (map.get(k) instanceof Boolean) {
-                        intent.putExtra(k, (boolean) map.get(k));
-                    } else if (map.get(k) instanceof Byte) {
-                        intent.putExtra(k, (byte) map.get(k));
-                    } else if (map.get(k) instanceof String) {
-                        intent.putExtra(k, (String) map.get(k));
-                    } else if (map.get(k) instanceof Integer) {
-                        intent.putExtra(k, (int) map.get(k));
-                    } else if (map.get(k) instanceof Long) {
-                        intent.putExtra(k, (long) map.get(k));
-                    } else if (map.get(k) instanceof Double) {
-                        intent.putExtra(k, (double) map.get(k));
-                    } else if (map.get(k) instanceof Float) {
-                        intent.putExtra(k, (float) map.get(k));
-                    } else if (map.get(k) instanceof Serializable) {
-                        intent.putExtra(k, (Serializable) map.get(k));
-                    }
+        if (map != null) {
+            for (String k : map.keySet()) {
+                if (map.get(k) instanceof Boolean) {
+                    intent.putExtra(k, (boolean) map.get(k));
+                } else if (map.get(k) instanceof Byte) {
+                    intent.putExtra(k, (byte) map.get(k));
+                } else if (map.get(k) instanceof String) {
+                    intent.putExtra(k, (String) map.get(k));
+                } else if (map.get(k) instanceof Integer) {
+                    intent.putExtra(k, (int) map.get(k));
+                } else if (map.get(k) instanceof Long) {
+                    intent.putExtra(k, (long) map.get(k));
+                } else if (map.get(k) instanceof Double) {
+                    intent.putExtra(k, (double) map.get(k));
+                } else if (map.get(k) instanceof Float) {
+                    intent.putExtra(k, (float) map.get(k));
+                } else if (map.get(k) instanceof Serializable) {
+                    intent.putExtra(k, (Serializable) map.get(k));
                 }
             }
         }
