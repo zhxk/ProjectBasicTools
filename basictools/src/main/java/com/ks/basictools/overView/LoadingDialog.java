@@ -3,7 +3,9 @@ package com.ks.basictools.overView;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.ks.basictools.AppManager;
 import com.ks.basictools.R;
@@ -17,6 +19,7 @@ import java.util.Objects;
  */
 public class LoadingDialog extends ProgressDialog {
     private static LoadingDialog mInstance;
+    private TextView tip;
 
     public static LoadingDialog getInstance() {
         mInstance = new LoadingDialog(AppManager.getAppManager().currentActivity(), R.style.loadingDialog);
@@ -43,10 +46,17 @@ public class LoadingDialog extends ProgressDialog {
         setCanceledOnTouchOutside(false);
 
         setContentView(R.layout.loading_dialog);
+        tip = findViewById(R.id.tv_tip);
         WindowManager.LayoutParams params = Objects.requireNonNull(getWindow()).getAttributes();
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         getWindow().setAttributes(params);
+    }
+
+    public void setTipText(String tipText) {
+        if (tip != null) {
+            tip.setText(tipText);
+        }
     }
 
     @Override

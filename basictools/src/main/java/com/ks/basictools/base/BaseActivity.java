@@ -46,7 +46,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 隐藏标题栏
         if (getSupportActionBar() != null)
             getSupportActionBar().hide();
-
         /*设置状态栏*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View decorView = getWindow().getDecorView();
@@ -108,6 +107,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void showLoading() {
         if (!AppManager.getAppManager().currentActivity().isFinishing()) {
             mLoadingDialog.show();
+        }
+    }
+    /**
+     * Description：显示加载中。。。
+     * @param tipText 提示文字
+     */
+    public void showLoading(String tipText) {
+        if (!AppManager.getAppManager().currentActivity().isFinishing()) {
+            mLoadingDialog.show();
+            mLoadingDialog.setTipText(tipText);
         }
     }
 
