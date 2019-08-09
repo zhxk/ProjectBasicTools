@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ks.basictools">
+    package="com.ks.projectbasictools">
 
     <!-- 网络请求权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,11 +11,5 @@
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-
-    <application>
-        <activity android:name=".java.activity.MainActivity">
-
-        </activity>
-    </application>
 
 </manifest>
