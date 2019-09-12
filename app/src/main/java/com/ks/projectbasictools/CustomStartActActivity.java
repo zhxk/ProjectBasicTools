@@ -1,5 +1,6 @@
 package com.ks.projectbasictools;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@SuppressLint("SetTextI18n")
 public class CustomStartActActivity extends BaseActivity {
 
     private final int CODE_RESULT = 0x1654;
@@ -29,6 +31,7 @@ public class CustomStartActActivity extends BaseActivity {
     }
 
     public void startActOnDefault(View view) {
+        textView.setText("这是第一个 Activity");
         startAct(this, SecondActivity.class);
     }
 
@@ -36,7 +39,10 @@ public class CustomStartActActivity extends BaseActivity {
      * @Desc 自定义样式跳转
      */
     public void startActOnCustom(View view) {
-        startAct(new Intent(this, SecondActivity.class), R.anim.activity_in);
+        textView.setText("这是第一个 Activity");
+        Map<String, Object> map = new HashMap<>();
+        map.put("param1", "自定义样式跳转");
+        startAct(this, SecondActivity.class, map, R.anim.activity_in);
     }
 
     /**

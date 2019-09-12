@@ -2,11 +2,12 @@ package com.ks.projectbasictools.publicView;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
 
 import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.base.BaseActivity;

@@ -6,7 +6,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.ks.projectbasictools.base.BaseActivity;
-import com.ks.projectbasictools.utils.LogUtils;
 
 import java.util.Random;
 
