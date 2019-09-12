@@ -11,8 +11,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
-//
-//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1' // 添加这一行
+
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1' // 添加这一行
 //
 //        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 //        classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
