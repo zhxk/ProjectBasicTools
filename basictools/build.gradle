@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 //apply plugin: 'com.jakewharton.butterknife'
-//apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.github.dcendents.android-maven'// 提交jitpack添加这一行
 
 android {
     compileSdkVersion 29
