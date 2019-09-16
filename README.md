@@ -1,4 +1,19 @@
-# ProjectBasicTools
+# ProjectBasicTools 适用于 所有Android 项目的一些基础工具。与繁琐的代码说拜拜
+### 功能包括但不限于：一行代码自定义状态栏样式、自带好看的Toast、一行代码自定义跳转Activity（包括自定义样式） 等等。
+
+先上效果图：
+
+1. Toast
+
+	(https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E5%90%90%E5%8F%B8.gif?raw=true)
+
+2. 状态栏
+
+	(https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E7%8A%B6%E6%80%81%E6%A0%8F.gif?raw=true)
+
+3. 界面跳转
+
+	(https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
 
 版本说明
 
