@@ -5,15 +5,15 @@
 
 1. Toast
 
-	(https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E5%90%90%E5%8F%B8.gif?raw=true)
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E5%90%90%E5%8F%B8.gif?raw=true)
 
 2. 状态栏
 
-	(https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E7%8A%B6%E6%80%81%E6%A0%8F.gif?raw=true)
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E7%8A%B6%E6%80%81%E6%A0%8F.gif?raw=true)
 
 3. 界面跳转
 
-	(https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
 
 版本说明
 
