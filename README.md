@@ -14,6 +14,10 @@
 	iii. 界面跳转
 
 	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
+	
+	iv. 网络缓存
+
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
 
 2. 使用说明
 
