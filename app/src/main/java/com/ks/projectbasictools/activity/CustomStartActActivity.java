@@ -1,13 +1,13 @@
-package com.ks.projectbasictools;
+package com.ks.projectbasictools.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.base.BaseActivity;
 
 import java.util.HashMap;

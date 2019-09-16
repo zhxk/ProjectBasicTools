@@ -1,9 +1,10 @@
-package com.ks.projectbasictools;
+package com.ks.projectbasictools.activity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.base.BaseActivity;
 import com.ks.projectbasictools.utils.ToastKs;
 

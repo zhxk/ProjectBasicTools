@@ -1,10 +1,11 @@
-package com.ks.projectbasictools;
+package com.ks.projectbasictools.activity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.base.BaseActivity;
 
 import java.util.Random;

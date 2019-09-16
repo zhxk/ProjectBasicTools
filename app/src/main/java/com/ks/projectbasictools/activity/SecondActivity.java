@@ -1,4 +1,4 @@
-package com.ks.projectbasictools;
+package com.ks.projectbasictools.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,6 +8,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ks.projectbasictools.ActivityCollector;
+import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.base.BaseActivity;
 
 import butterknife.BindView;
