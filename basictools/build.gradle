@@ -29,20 +29,20 @@ android {
 }
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
-    api 'androidx.appcompat:appcompat:1.1.0'
-    api 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //butterknife映射工具
-    api 'com.jakewharton:butterknife:10.0.0'
+    implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     //okhttp包
-    api 'com.zhy:okhttputils:2.6.2'
-    api 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    implementation 'com.zhy:okhttputils:2.6.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     //retrofit
-    api 'com.squareup.retrofit2:retrofit:2.4.0'
-    api 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     //RecycleView添加HeaderView和FooterView
-    api 'com.zhy:base-rvadapter:3.0.3'
-    api 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.zhy:base-rvadapter:3.0.3'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 }
