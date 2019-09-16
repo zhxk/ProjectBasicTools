@@ -1,30 +1,35 @@
-# ProjectBasicTools
+# ProjectBasicTools 适用于 所有Android 项目的一些基础开发工具。与繁琐的代码说拜拜
+### 功能包括但不限于：一行代码自定义状态栏样式、自带好看的Toast、一行代码自定义跳转Activity（包括自定义样式） 等等。
 
-版本说明
+1. 先上效果图：
 
-1.2.0版本：
-	
-	1、完善ToastKs类，第一个和第二个Toast相距很短的情况下显示不重叠，区分更明显；
+	i. Toast
 
-1.1.6版本：
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E5%90%90%E5%8F%B8.gif?raw=true)
 
-	1、修改finishAct()调用异常的问题；
+	ii. 状态栏
 
-1.1.4版本：
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E7%8A%B6%E6%80%81%E6%A0%8F.gif?raw=true)
 
-	1、添加了ToastKs；
-	2、封装了OkHttpUtil为继承式调用；
+	iii. 界面跳转
 
-1.1.3版本：
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
 
-	点击返回按钮时，新增退出activity的默认动画，可重写
+2. 使用说明
 
-1.1.2版本 ：
+i. 步骤1.将JitPack存储库添加到构建文件中,将其添加到存储库末尾的根build.gradle中：
 
-	1、新增Loading公用控件；
-	2、新增跳转动画效果（默认上下进入退出）；
-	3、触摸非EditText控件区域收起软键盘；
-	4、设置状态栏是否透明以及图标文字颜色的公用方法；
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+ii.步骤2.添加依赖项：
+
+	dependencies {
+	        implementation 'com.github.zhxk:ProjectBasicTools:1.3.4'
+	}
 
 项目基础使用工具
 
