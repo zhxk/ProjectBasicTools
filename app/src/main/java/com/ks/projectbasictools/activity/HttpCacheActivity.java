@@ -3,7 +3,6 @@ package com.ks.projectbasictools.activity;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -17,8 +16,6 @@ import com.ks.projectbasictools.adapter.NewsApapter;
 import com.ks.projectbasictools.api.NewsApi;
 import com.ks.projectbasictools.base.BaseActivity;
 import com.ks.projectbasictools.bean.NewsEntity;
-import com.ks.projectbasictools.constants.AppConstants;
-import com.ks.projectbasictools.helper.OkHttpClientHelper;
 import com.ks.projectbasictools.override.RetrofitHttp;
 import com.ks.projectbasictools.utils.ToastKs;
 
@@ -28,7 +25,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpCacheActivity extends BaseActivity {
     private SwipeRefreshLayout refreshLayout;
@@ -41,7 +37,16 @@ public class HttpCacheActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_http_cache);
 
-        init();
+        initPermission();
+    }
+
+    //Android 6.0以上的权限申请
+    private void initPermission() {
+        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermission(0, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }else{
+            init();
+        }
     }
 
     private void init() {
@@ -99,5 +104,15 @@ public class HttpCacheActivity extends BaseActivity {
             refreshLayout.setRefreshing(false);
         }
         ToastKs.show(HttpCacheActivity.this, "加载失败，失败原因：" + msg);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+            init();
+        }
+        else{
+            finish();
+        }
     }
 }

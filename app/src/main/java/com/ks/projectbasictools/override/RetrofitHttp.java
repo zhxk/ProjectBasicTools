@@ -6,14 +6,6 @@ import com.ks.projectbasictools.utils.RetrofitParent;
 public class RetrofitHttp extends RetrofitParent {
     private static RetrofitHttp mInstance;
 
-    public RetrofitHttp() {
-        try {
-            throw new Exception("该类不能实例化");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static RetrofitHttp getInstance() {
         if (mInstance == null) {
             synchronized (RetrofitHttp.class) {
