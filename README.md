@@ -17,7 +17,7 @@
 	
 	iv. 网络缓存
 
-	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E8%B7%B3%E8%BD%AC.gif?raw=true)
+	![加载失败](https://github.com/zhxk/ProjectBasicTools/blob/master/gif/%E7%BD%91%E7%BB%9C%E7%BC%93%E5%AD%98.gif?raw=true)
 
 2. 使用说明
 
