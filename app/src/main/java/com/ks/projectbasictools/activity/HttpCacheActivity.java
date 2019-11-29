@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,18 +12,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.adapter.NewsApapter;
-import com.ks.projectbasictools.api.NewsApi;
 import com.ks.projectbasictools.base.BaseActivity;
 import com.ks.projectbasictools.bean.NewsEntity;
-import com.ks.projectbasictools.override.RetrofitHttp;
+import com.ks.projectbasictools.constants.AppConstants;
+import com.ks.projectbasictools.retrofit.HttpResponseListener;
+import com.ks.projectbasictools.retrofit.ServerHttp;
+import com.ks.projectbasictools.retrofit.Request;
 import com.ks.projectbasictools.utils.ToastKs;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class HttpCacheActivity extends BaseActivity {
     private SwipeRefreshLayout refreshLayout;
@@ -73,20 +74,23 @@ public class HttpCacheActivity extends BaseActivity {
         if (!refreshLayout.isRefreshing()){
             refreshLayout.setRefreshing(true);
         }
-        Retrofit retrofit =RetrofitHttp.getInstance().getRetrofit(HttpCacheActivity.this);
 
-        NewsApi newsApi = retrofit.create(NewsApi.class);
-        newsApi.getNews().enqueue(new Callback<NewsEntity>() {
+        Request request = ServerHttp.newGetRequest(AppConstants.HTTP.NEWS);
+        /*Request request = ServerHttp.newPostRequest(AppConstants.HTTP.NEWS);*/
+        //参数添加
+        /*Map<String, Object> map = new HashMap<>();
+        map.put("key", "value");
+        request.putParamsMap(map);*/
+        ServerHttp.send(request, new HttpResponseListener<NewsEntity>() {
             @Override
-            public void onResponse(Call<NewsEntity> call, Response<NewsEntity> response) {
+            public void onResponse(NewsEntity newsEntity) {
                 //请求成功
-                getDataSuccess(response.body().getStories());
+                getDataSuccess(newsEntity.getStories());
             }
-
             @Override
-            public void onFailure(Call<NewsEntity> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable e) {
                 //请求失败
-                getDataFailure(t.getMessage());
+                getDataFailure(e.getMessage());
             }
         });
     }
