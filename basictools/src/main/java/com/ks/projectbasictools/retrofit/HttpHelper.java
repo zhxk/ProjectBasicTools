@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.ks.projectbasictools.helper.OkHttpClientHelper;
+import com.ks.projectbasictools.utils.JSONUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -140,7 +141,7 @@ public final class HttpHelper {
                 try {
                     String json = ((ResponseBody)response.body()).string();
                     if (L.isDebug) {
-                        L.i("response data:" + json);
+                        L.i("response data:" + JSONUtil.formatJSONString(json));
                     }
 
                     if (!String.class.equals(httpResponseListener.getType())) {
