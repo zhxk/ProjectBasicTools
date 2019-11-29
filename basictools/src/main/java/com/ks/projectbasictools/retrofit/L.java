@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class L {
     public static boolean isDebug = false;
-    private static final String TAG = "TAG_RETROFIT";
+    private static final String TAG = "zhxk_JsonResponse";
 
     public L() {
     }
@@ -17,7 +17,7 @@ public class L {
     }
 
     public static void i(String message) {
-        i("TAG_RETROFIT", message);
+        i(TAG, message);
     }
 
     public static void e(String tag, String message) {
@@ -28,7 +28,7 @@ public class L {
     }
 
     public static void e(String message) {
-        e("TAG_RETROFIT", message);
+        e(TAG, message);
     }
 
     public static void e(String tag, String message, Throwable e) {
@@ -43,11 +43,11 @@ public class L {
     }
 
     public static void e(Throwable e, String message) {
-        e("TAG_RETROFIT", message, e);
+        e(TAG, message, e);
     }
 
     public static void e(Throwable e) {
-        e("TAG_RETROFIT", "", e);
+        e(TAG, "", e);
     }
 }
 
