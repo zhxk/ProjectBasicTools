@@ -2,7 +2,9 @@ package com.ks.projectbasictools.retrofit;
 
 import android.content.Context;
 import android.text.TextUtils;
+
 import com.google.gson.Gson;
+import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.helper.OkHttpClientHelper;
 import com.ks.projectbasictools.utils.JSONUtil;
 
@@ -11,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -61,14 +64,14 @@ public final class HttpHelper {
     public static HttpHelper getInstance() {
         if (sInstance == null || sInstance.get() == null) {
             Class var0 = HttpHelper.class;
-            synchronized(HttpHelper.class) {
+            synchronized (HttpHelper.class) {
                 if (sInstance == null || sInstance.get() == null) {
                     sInstance = new WeakReference(new HttpHelper());
                 }
             }
         }
 
-        return (HttpHelper)sInstance.get();
+        return (HttpHelper) sInstance.get();
     }
 
     public static <T> Call getAsync(String apiUrl, @HeaderMap Map<String, Object> headers, Map<String, Object> paramMap, HttpResponseListener<T> httpResponseListener) {
@@ -80,8 +83,14 @@ public final class HttpHelper {
             headers = new HashMap();
         }
 
-        HttpHelper.HttpService httpService = (HttpHelper.HttpService)getInstance().mRetrofit.create(HttpHelper.HttpService.class);
-        Call<ResponseBody> call = httpService.get(apiUrl, (Map)headers, (Map)paramMap);
+        HttpHelper.HttpService httpService = (HttpHelper.HttpService) getInstance().mRetrofit.create(HttpHelper.HttpService.class);
+        Call<ResponseBody> call = httpService.get(apiUrl, (Map) headers, (Map) paramMap);
+        if (L.isDebug) {
+            L.i("Get请求路径：" + apiUrl);
+            for (String k : paramMap.keySet()) {
+                L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
+            }
+        }
         parseNetData(call, httpResponseListener, apiUrl);
         return call;
     }
@@ -95,20 +104,26 @@ public final class HttpHelper {
             headers = new HashMap();
         }
 
-        HttpHelper.HttpService httpService = (HttpHelper.HttpService)getInstance().mRetrofit.create(HttpHelper.HttpService.class);
-        Call<ResponseBody> call = httpService.post(apiUrl, (Map)headers, (Map)paramMap);
+        HttpHelper.HttpService httpService = (HttpHelper.HttpService) getInstance().mRetrofit.create(HttpHelper.HttpService.class);
+        Call<ResponseBody> call = httpService.post(apiUrl, (Map) headers, (Map) paramMap);
+        if (L.isDebug) {
+            L.i("Post请求路径：" + apiUrl);
+            for (String k : paramMap.keySet()) {
+                L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
+            }
+        }
         parseNetData(call, httpResponseListener, apiUrl);
         return call;
     }
 
     public static Call upload(Request request, final UploadListener uploadListener) {
-        if (request.getUploadFiles() == null || !((File)request.getUploadFiles().get(0)).exists()) {
+        if (request.getUploadFiles() == null || !((File) request.getUploadFiles().get(0)).exists()) {
             (new FileNotFoundException("file does not exist(文件不存在)")).printStackTrace();
         }
 
         Map<String, RequestBody> requestBodyMap = new HashMap();
-        RequestBody requestBody = RequestBody.create(request.getMediaType(), (File)request.getUploadFiles().get(0));
-        requestBodyMap.put("file[]\"; filename=\"" + ((File)request.getUploadFiles().get(0)).getName(), requestBody);
+        RequestBody requestBody = RequestBody.create(request.getMediaType(), (File) request.getUploadFiles().get(0));
+        requestBodyMap.put("file[]\"; filename=\"" + ((File) request.getUploadFiles().get(0)).getName(), requestBody);
         String httpUrl = request.getApiUlr().trim();
         String tempUrl = httpUrl.substring(0, httpUrl.length() - 1);
         String baseUrl = tempUrl.substring(0, tempUrl.lastIndexOf(File.separator) + 1);
@@ -120,7 +135,7 @@ public final class HttpHelper {
         }
 
         Retrofit retrofit = (new Builder()).addConverterFactory(new ChunkingConverterFactory(requestBody, uploadListener)).addConverterFactory(GsonConverterFactory.create()).baseUrl(baseUrl).build();
-        HttpHelper.HttpService service = (HttpHelper.HttpService)retrofit.create(HttpHelper.HttpService.class);
+        HttpHelper.HttpService service = (HttpHelper.HttpService) retrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> model = null;
         model = service.postUpload(httpUrl.substring(baseUrl.length()), "uploadDes", requestBodyMap);
         model.enqueue(new Callback<ResponseBody>() {
@@ -139,7 +154,7 @@ public final class HttpHelper {
         call.enqueue(new Callback<ResponseBody>() {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    String json = ((ResponseBody)response.body()).string();
+                    String json = ((ResponseBody) response.body()).string();
                     if (L.isDebug) {
                         L.i("请求路径：" + apiUrl + " \nresponse data:" + JSONUtil.formatJSONString(json));
                     }
@@ -159,6 +174,7 @@ public final class HttpHelper {
                     httpResponseListener.onFailure(call, var6);
                 }
             }
+
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 if (L.isDebug) {
                     L.e("请求路径：" + apiUrl + " \nHttp Exception:", t.getMessage());
