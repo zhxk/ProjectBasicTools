@@ -82,7 +82,7 @@ public final class HttpHelper {
 
         HttpHelper.HttpService httpService = (HttpHelper.HttpService)getInstance().mRetrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> call = httpService.get(apiUrl, (Map)headers, (Map)paramMap);
-        parseNetData(call, httpResponseListener);
+        parseNetData(call, httpResponseListener, apiUrl);
         return call;
     }
 
@@ -97,7 +97,7 @@ public final class HttpHelper {
 
         HttpHelper.HttpService httpService = (HttpHelper.HttpService)getInstance().mRetrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> call = httpService.post(apiUrl, (Map)headers, (Map)paramMap);
-        parseNetData(call, httpResponseListener);
+        parseNetData(call, httpResponseListener, apiUrl);
         return call;
     }
 
@@ -135,13 +135,13 @@ public final class HttpHelper {
         return model;
     }
 
-    private static <T> void parseNetData(Call<ResponseBody> call, final HttpResponseListener<T> httpResponseListener) {
+    private static <T> void parseNetData(Call<ResponseBody> call, final HttpResponseListener<T> httpResponseListener, String apiUrl) {
         call.enqueue(new Callback<ResponseBody>() {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String json = ((ResponseBody)response.body()).string();
                     if (L.isDebug) {
-                        L.i("response data:" + JSONUtil.formatJSONString(json));
+                        L.i("请求路径：" + apiUrl + " \nresponse data:" + JSONUtil.formatJSONString(json));
                     }
 
                     if (!String.class.equals(httpResponseListener.getType())) {
@@ -153,15 +153,16 @@ public final class HttpHelper {
                     }
                 } catch (Exception var6) {
                     if (L.isDebug) {
-                        L.e("Http Exception:", var6);
+                        L.e("请求路径：" + apiUrl + " \nHttp Exception:", var6.getMessage());
                     }
 
                     httpResponseListener.onFailure(call, var6);
                 }
-
             }
-
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                if (L.isDebug) {
+                    L.e("请求路径：" + apiUrl + " \nHttp Exception:", t.getMessage());
+                }
                 httpResponseListener.onFailure(call, t);
             }
         });
