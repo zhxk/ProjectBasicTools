@@ -70,8 +70,8 @@ public final class OkHttpHelper {
             //添加token
             if (token != null && !token.isEmpty()) {
                 for (String k : token.keySet()) {
-                    postFormBuilder.addParams(k, String.valueOf(map.get(k)));
-                    log.append("OkHttpPost请求参数：").append(k).append(":").append(map.get(k)).append("\n");
+                    postFormBuilder.addParams(k, String.valueOf(token.get(k)));
+                    log.append("OkHttpPost请求参数：").append(k).append(":").append(token.get(k)).append("\n");
                 }
             }
             //循环添加参数
@@ -133,8 +133,8 @@ public final class OkHttpHelper {
             //添加token
             if (token != null && !token.isEmpty()) {
                 for (String k : token.keySet()) {
-                    getFormBuilder.addParams(k, String.valueOf(map.get(k)));
-                    log.append("OkHttpPost请求参数：").append(k).append(":").append(map.get(k)).append("\n");
+                    getFormBuilder.addParams(k, String.valueOf(token.get(k)));
+                    log.append("OkHttpGet请求参数：").append(k).append(":").append(token.get(k)).append("\n");
                 }
             }
             //循环添加参数
