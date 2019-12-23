@@ -18,6 +18,7 @@ import com.ks.projectbasictools.constants.AppConstants;
 import com.ks.projectbasictools.retrofit.HttpResponseListener;
 import com.ks.projectbasictools.retrofit.Request;
 import com.ks.projectbasictools.retrofit.ServerHttp;
+import com.ks.projectbasictools.retrofit.ServerUtils;
 import com.ks.projectbasictools.utils.ToastKs;
 import com.ks.projectbasictools.utils.ToastUtil;
 
@@ -44,7 +45,7 @@ public class HttpCacheActivity extends BaseActivity {
     private void initPermission() {
         if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             requestPermission(0, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }else{
+        } else {
             init();
         }
     }
@@ -53,7 +54,7 @@ public class HttpCacheActivity extends BaseActivity {
         refreshLayout = findViewById(R.id.refreshLayout);
         mRecyclerView = findViewById(R.id.rv);
         manager = new LinearLayoutManager(this);
-        myAdapter = new NewsApapter(this,null);
+        myAdapter = new NewsApapter(this, null);
 
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -70,17 +71,13 @@ public class HttpCacheActivity extends BaseActivity {
     }
 
     private void getData() {
-        if (!refreshLayout.isRefreshing()){
+        if (!refreshLayout.isRefreshing()) {
             refreshLayout.setRefreshing(true);
         }
 
-        Request request = ServerHttp.newGetRequest(AppConstants.HTTP.NEWS);
-        /*Request request = ServerHttp.newPostRequest(AppConstants.HTTP.NEWS);*/
-        //参数添加
         /*Map<String, Object> map = new HashMap<>();
-        map.put("key", "value");
-        request.putParamsMap(map);*/
-        ServerHttp.send(request, new HttpResponseListener<NewsEntity>() {
+        map.put("key", "value");*/
+        ServerUtils.requestGet(AppConstants.HTTP.NEWS, null, new HttpResponseListener<NewsEntity>() {
             @Override
             public void onResponse(NewsEntity newsEntity) {
                 //请求成功
@@ -100,16 +97,16 @@ public class HttpCacheActivity extends BaseActivity {
         });
     }
 
-    private void getDataSuccess(List<NewsEntity.StoriesBean> list){
+    private void getDataSuccess(List<NewsEntity.StoriesBean> list) {
         myAdapter.setNewData(list);
 
-        if (refreshLayout.isRefreshing()){
+        if (refreshLayout.isRefreshing()) {
             refreshLayout.setRefreshing(false);
         }
     }
 
     private void getDataFailure(String msg) {
-        if (refreshLayout.isRefreshing()){
+        if (refreshLayout.isRefreshing()) {
             refreshLayout.setRefreshing(false);
         }
         ToastKs.show(HttpCacheActivity.this, "加载失败，失败原因：" + msg);
@@ -117,10 +114,9 @@ public class HttpCacheActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             init();
-        }
-        else{
+        } else {
             finish();
         }
     }

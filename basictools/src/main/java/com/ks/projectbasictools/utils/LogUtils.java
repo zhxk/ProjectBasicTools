@@ -13,6 +13,7 @@ import java.util.List;
  */
 
 public class LogUtils {
+    public static boolean isDebug = false;
     /** 日志输出级别NONE */
     public static final int LEVEL_NONE = 0;
     /** 日志输出级别V */
@@ -27,7 +28,7 @@ public class LogUtils {
     public static final int LEVEL_ERROR = 5;
 
     /** 日志输出时的TAG */
-    private static String mTag = "gb_zhxk";
+    private static String mTag = "zhxk";
     /** 是否允许输出log */
     private static int mDebuggable = 6;
     /** 用于记时的变量 */

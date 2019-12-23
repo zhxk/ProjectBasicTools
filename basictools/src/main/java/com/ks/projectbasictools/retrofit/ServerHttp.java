@@ -9,8 +9,9 @@ public class ServerHttp {
     public ServerHttp() {
     }
 
-    public static final void init(Context context, String httpBaseUrl) {
+    public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu) {
         HttpHelper.setBaseUrl(context, httpBaseUrl);
+        HttpHelper.setHttpResponseYu(httpResponseYu);
     }
 
     public static <T> Call getAsync(String apiUrl, HttpResponseListener<T> httpResponseListener) {

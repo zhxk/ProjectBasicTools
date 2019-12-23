@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.helper.OkHttpClientHelper;
 import com.ks.projectbasictools.utils.JSONUtil;
 
@@ -33,11 +32,12 @@ import retrofit2.http.PartMap;
 import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
-public final class HttpHelper {
+public final class HttpHelper<T> {
     private static Context mContext;
     private static volatile WeakReference<HttpHelper> sInstance;
     private final Retrofit mRetrofit;
     private static String sBaseUrl;
+    private static HttpResponseYu mHttpResponseYu;
 
     public static void setBaseUrl(Context context, String baseUrl) {
         mContext = context;
@@ -48,10 +48,14 @@ public final class HttpHelper {
         return sBaseUrl;
     }
 
+    public static void setHttpResponseYu(HttpResponseYu mHttpResponseYu) {
+        HttpHelper.mHttpResponseYu = mHttpResponseYu;
+    }
+
     private HttpHelper() {
         Builder builder = new Builder();
-        if (TextUtils.isEmpty(getBaseUrl())) {
-            throw new NullPointerException("init(Context,httpBaseUrl)：httpBaseUrl is not null");
+        if (TextUtils.isEmpty(getBaseUrl()) || mHttpResponseYu == null) {
+            throw new NullPointerException("init(Context,httpBaseUrl)：httpBaseUrl is not null; httpResponseYu is not null");
         } else {
             this.mRetrofit = builder
                     .baseUrl(getBaseUrl())
@@ -86,7 +90,7 @@ public final class HttpHelper {
         HttpHelper.HttpService httpService = (HttpHelper.HttpService) getInstance().mRetrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> call = httpService.get(apiUrl, (Map) headers, (Map) paramMap);
         if (L.isDebug) {
-            L.i("Get请求路径：" + apiUrl);
+            L.i("Get请求路径：" + sBaseUrl + apiUrl);
             for (String k : paramMap.keySet()) {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
@@ -107,7 +111,7 @@ public final class HttpHelper {
         HttpHelper.HttpService httpService = (HttpHelper.HttpService) getInstance().mRetrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> call = httpService.post(apiUrl, (Map) headers, (Map) paramMap);
         if (L.isDebug) {
-            L.i("Post请求路径：" + apiUrl);
+            L.i("Post请求路径：" + sBaseUrl + apiUrl);
             for (String k : paramMap.keySet()) {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
@@ -154,23 +158,29 @@ public final class HttpHelper {
         call.enqueue(new Callback<ResponseBody>() {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
-                    String json = ((ResponseBody) response.body()).string();
-                    if (L.isDebug) {
-                        L.i("请求路径：" + apiUrl + " \nresponse data:" + JSONUtil.formatJSONString(json));
-                    }
-
-                    if (!String.class.equals(httpResponseListener.getType())) {
-                        Gson gson = new Gson();
-                        T t = gson.fromJson(json, httpResponseListener.getType());
-                        httpResponseListener.onResponse(t);
+                    if (response.code() == 200) {
+                        String json = response.body() != null ? (response.body()).string() : "";
+                        if (L.isDebug) {
+                            L.i(call.request().method() + "请求路径：" + sBaseUrl + apiUrl + " \nresponse data:" + JSONUtil.formatJSONString(json));
+                        }
+                        mHttpResponseYu.onResponse(mContext, response, json, httpResponseListener);
+                        /*if (!String.class.equals(httpResponseListener.getType())) {
+                            Gson gson = new Gson();
+                            T t = gson.fromJson(json, httpResponseListener.getType());
+                            mHttpResponseYu.onResponse(mContext, response.code(), response.message(), t, httpResponseListener);
+                        } else {
+                            mHttpResponseYu.onResponse(mContext, response.code(), response.message(), json, httpResponseListener);
+                        }*/
                     } else {
-                        httpResponseListener.onResponse((T) json);
+                        if (L.isDebug) {
+                            L.e(call.request().method() + "请求路径：" + sBaseUrl + apiUrl + ",错误码：" + response.code() + "\n错误信息：" + response.message());
+                        }
+                        mHttpResponseYu.onResponse(mContext, response, "", httpResponseListener);
                     }
                 } catch (Exception var6) {
                     if (L.isDebug) {
-                        L.e("请求路径：" + apiUrl + " \nHttp Exception:", var6.getMessage());
+                        L.e("请求路径：" + sBaseUrl + apiUrl + " \nHttp Exception:", var6.getMessage());
                     }
-
                     httpResponseListener.onFailure(call, var6);
                 }
             }
