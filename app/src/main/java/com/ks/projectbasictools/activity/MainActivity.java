@@ -30,4 +30,7 @@ public class MainActivity extends BaseActivity {
     public void startCacheAct(View view) {
         startAct(this, HttpCacheActivity.class);
     }
+    public void startHttpAct(View view) {
+        startAct(this, HttpActivity.class);
+    }
 }

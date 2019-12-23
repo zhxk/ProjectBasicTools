@@ -3,6 +3,8 @@ package com.ks.projectbasictools;
 import android.app.Application;
 
 import com.ks.projectbasictools.constants.AppConstants;
+import com.ks.projectbasictools.okhttp.OkHttpUtils;
+import com.ks.projectbasictools.override.StringCallBackYu;
 import com.ks.projectbasictools.retrofit.ServerHttp;
 
 /**
@@ -16,7 +18,12 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        /*带缓存网络请求 初始化*/
         ServerHttp.init(this, AppConstants.HTTP.BASE_URL);
         ServerHttp.setDebug(true);
+
+        /*无缓存网络请求 初始化*/
+        OkHttpUtils.init(this, AppConstants.HTTP.BASE_URL, new StringCallBackYu());
+        OkHttpUtils.setDebug(true);
     }
 }

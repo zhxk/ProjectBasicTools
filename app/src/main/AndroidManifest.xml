@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ks.projectbasictools">
+    <!-- 网络访问权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 获取网络改变的状态的请求权限 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 调整系统设置权限 -->
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".BaseApplication"
@@ -10,9 +18,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/activityTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.HttpCacheActivity"
+        <activity android:name=".activity.HttpActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".activity.HttpCacheActivity"
             android:launchMode="singleTop"
             android:theme="@style/activityTheme" />
         <activity
@@ -48,14 +59,6 @@
         <activity
             android:name=".publicView.TitleVarView"
             android:launchMode="singleTop" />
-    </application> <!-- 网络访问权限 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 获取网络改变的状态的请求权限 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- 调整系统设置权限 -->
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    </application>
 
 </manifest>

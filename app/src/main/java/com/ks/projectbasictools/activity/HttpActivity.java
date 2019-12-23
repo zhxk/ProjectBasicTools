@@ -1,10 +1,7 @@
 package com.ks.projectbasictools.activity;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,20 +10,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ks.projectbasictools.R;
 import com.ks.projectbasictools.adapter.NewsApapter;
 import com.ks.projectbasictools.base.BaseActivity;
+import com.ks.projectbasictools.base_interface.StringCallBack;
 import com.ks.projectbasictools.bean.NewsEntity;
 import com.ks.projectbasictools.constants.AppConstants;
-import com.ks.projectbasictools.retrofit.HttpResponseListener;
-import com.ks.projectbasictools.retrofit.Request;
-import com.ks.projectbasictools.retrofit.ServerHttp;
+import com.ks.projectbasictools.okhttp.OkHttpUtils;
 import com.ks.projectbasictools.utils.ToastKs;
-import com.ks.projectbasictools.utils.ToastUtil;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
+import okhttp3.Call;
 
-public class HttpCacheActivity extends BaseActivity {
+public class HttpActivity extends BaseActivity {
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView mRecyclerView;
     private NewsApapter myAdapter;
@@ -36,17 +33,7 @@ public class HttpCacheActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_http_cache);
-
-        initPermission();
-    }
-
-    //Android 6.0以上的权限申请
-    private void initPermission() {
-        if (!hasPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            requestPermission(0, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }else{
-            init();
-        }
+        init();
     }
 
     private void init() {
@@ -73,28 +60,14 @@ public class HttpCacheActivity extends BaseActivity {
         if (!refreshLayout.isRefreshing()){
             refreshLayout.setRefreshing(true);
         }
-
-        Request request = ServerHttp.newGetRequest(AppConstants.HTTP.NEWS);
-        /*Request request = ServerHttp.newPostRequest(AppConstants.HTTP.NEWS);*/
-        //参数添加
-        /*Map<String, Object> map = new HashMap<>();
-        map.put("key", "value");
-        request.putParamsMap(map);*/
-        ServerHttp.send(request, new HttpResponseListener<NewsEntity>() {
+        OkHttpUtils.requestGet(this, AppConstants.HTTP.NEWS, null, new StringCallBack<NewsEntity>() {
             @Override
-            public void onResponse(NewsEntity newsEntity) {
-                //请求成功
-                getDataSuccess(newsEntity.getStories());
+            public void onResponse(NewsEntity response, int id) {
+                getDataSuccess(response.getStories());
             }
 
             @Override
-            public void onError(int code, String msg) {
-                ToastUtil.show(HttpCacheActivity.this, "错误码：" + code + "；错误信息：" + msg);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable e) {
-                //请求失败
+            public void onError(Call call, Exception e, int id) {
                 getDataFailure(e.getMessage());
             }
         });
@@ -112,16 +85,6 @@ public class HttpCacheActivity extends BaseActivity {
         if (refreshLayout.isRefreshing()){
             refreshLayout.setRefreshing(false);
         }
-        ToastKs.show(HttpCacheActivity.this, "加载失败，失败原因：" + msg);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0]==PackageManager.PERMISSION_GRANTED){
-            init();
-        }
-        else{
-            finish();
-        }
+        ToastKs.show(HttpActivity.this, "加载失败，失败原因：" + msg);
     }
 }
