@@ -44,8 +44,8 @@ public final class OkHttpHelper {
         return sBaseUrl;
     }
     public static void setToken(Map<String, Object> token) {
-        if (token == null) {
-            token = new HashMap<>();
+        if (OkHttpHelper.token == null) {
+            OkHttpHelper.token = new HashMap<>();
         } else {
             OkHttpHelper.token.clear();
         }
