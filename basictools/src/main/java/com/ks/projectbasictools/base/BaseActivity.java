@@ -44,14 +44,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 隐藏标题栏
         if (getSupportActionBar() != null)
             getSupportActionBar().hide();
-        /*设置状态栏*/
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View decorView = getWindow().getDecorView();
-            //状态栏中的文字颜色和图标颜色为深色，需要android系统6.0以上，而且目前只有一种可以修改（一种是深色，一种是浅色即白色）
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            //设置状态栏的颜色
-            getWindow().setStatusBarColor(getResources().getColor(R.color.white));
-        }
         //添加到Activity管理
         ActivityCollector.addActivity(this, getClass());
         //将Activity实例添加到AppManager的堆栈

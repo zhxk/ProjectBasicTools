@@ -36,21 +36,13 @@ public class CustomStatusActivity extends BaseActivity {
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    isWhite = true;
-                } else {
-                    isWhite = false;
-                }
+                isWhite = b;
             }
         });
         switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    isFull = true;
-                } else {
-                    isFull = false;
-                }
+                isFull = b;
             }
         });
     }
