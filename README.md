@@ -32,7 +32,7 @@ i. 步骤1.将JitPack存储库添加到构建文件中,将其添加到存储库�
 ii.步骤2.添加依赖项：
 
 	dependencies {
-	        implementation 'com.github.zhxk:ProjectBasicTools:1.4.0'
+	        implementation 'com.github.zhxk:ProjectBasicTools:1.4.2.2'
 	}
 
 项目基础使用工具
