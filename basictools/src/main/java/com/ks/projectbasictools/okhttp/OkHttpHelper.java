@@ -61,6 +61,7 @@ public final class OkHttpHelper {
     public static <T> void requestCallPost(final Context context, String url, Map<String, Object> map
             , StringCallBack<T> mStringCallBack) {
         if (auth()) {
+            clearLog();
             RequestCall requestCall;
             PostFormBuilder postFormBuilder;
             String url1 = sBaseUrl + url;
@@ -124,6 +125,7 @@ public final class OkHttpHelper {
             , Map<String, Object> map
             , StringCallBack<T> mStringCallBack) {
         if (auth()) {
+            clearLog();
             RequestCall requestCall;
             GetBuilder getFormBuilder;
             String url1 = sBaseUrl + url;
@@ -161,5 +163,13 @@ public final class OkHttpHelper {
                 }
             });
         }
+    }
+
+    /**
+     * @Desc 清空日志
+     */
+    private static void clearLog() {
+        int length = log.length();
+        log.delete(0, length);
     }
 }
