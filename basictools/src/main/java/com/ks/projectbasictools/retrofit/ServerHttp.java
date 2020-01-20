@@ -23,7 +23,15 @@ public class ServerHttp {
     }
 
     public static <T> Call send(Request request, HttpResponseListener<T> httpResponseListener) {
-        return RequestMethod.GET.equals(request.getRequestMethod()) ? HttpHelper.getAsync(request.getApiUlr(), request.getHeaderMap(), request.getParamsMap(), httpResponseListener) : HttpHelper.postAsync(request.getApiUlr(), request.getHeaderMap(), request.getParamsMap(), httpResponseListener);
+        return RequestMethod.GET.equals(request.getRequestMethod()) ?
+                HttpHelper.getAsync(request.getApiUlr(), request.getHeaderMap(), request.getParamsMap(), httpResponseListener)
+                : HttpHelper.postAsync(request.getApiUlr(), request.getHeaderMap(), request.getParamsMap(), httpResponseListener);
+    }
+
+    public static <T> Call sendJson(Request request, Object requestObj, HttpResponseListener<T> httpResponseListener) {
+        return RequestMethod.GET.equals(request.getRequestMethod()) ?
+                HttpHelper.getAsync(request.getApiUlr(), request.getHeaderMap(), request.getParamsMap(), httpResponseListener)
+                : HttpHelper.postAsync(request.getApiUlr(), request.getHeaderMap(), requestObj, httpResponseListener);
     }
 
     public static <T> Call upload(Request request, UploadListener uploadListener) {

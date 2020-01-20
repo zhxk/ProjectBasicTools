@@ -21,6 +21,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.Retrofit.Builder;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -75,7 +76,7 @@ public final class HttpHelper<T> {
             }
         }
 
-        return (HttpHelper) sInstance.get();
+        return sInstance.get();
     }
 
     public static <T> Call getAsync(String apiUrl, @HeaderMap Map<String, Object> headers, Map<String, Object> paramMap, HttpResponseListener<T> httpResponseListener) {
@@ -87,8 +88,8 @@ public final class HttpHelper<T> {
             headers = new HashMap();
         }
 
-        HttpHelper.HttpService httpService = (HttpHelper.HttpService) getInstance().mRetrofit.create(HttpHelper.HttpService.class);
-        Call<ResponseBody> call = httpService.get(apiUrl, (Map) headers, (Map) paramMap);
+        HttpHelper.HttpService httpService = getInstance().mRetrofit.create(HttpHelper.HttpService.class);
+        Call<ResponseBody> call = httpService.get(apiUrl, headers, paramMap);
         if (L.isDebug) {
             L.i("Get请求路径：" + sBaseUrl + apiUrl);
             for (String k : paramMap.keySet()) {
@@ -99,7 +100,8 @@ public final class HttpHelper<T> {
         return call;
     }
 
-    public static <T> Call postAsync(String apiUrl, @HeaderMap Map<String, Object> headers, Map<String, Object> paramMap, HttpResponseListener<T> httpResponseListener) {
+    public static <T> Call postAsync(String apiUrl, @HeaderMap Map<String, Object> headers, Map<String, Object> paramMap
+            , HttpResponseListener<T> httpResponseListener) {
         if (paramMap == null) {
             paramMap = new HashMap();
         }
@@ -108,13 +110,29 @@ public final class HttpHelper<T> {
             headers = new HashMap();
         }
 
-        HttpHelper.HttpService httpService = (HttpHelper.HttpService) getInstance().mRetrofit.create(HttpHelper.HttpService.class);
-        Call<ResponseBody> call = httpService.post(apiUrl, (Map) headers, (Map) paramMap);
+        HttpHelper.HttpService httpService = getInstance().mRetrofit.create(HttpHelper.HttpService.class);
+        Call<ResponseBody> call = httpService.post(apiUrl, headers, paramMap);
         if (L.isDebug) {
             L.i("Post请求路径：" + sBaseUrl + apiUrl);
             for (String k : paramMap.keySet()) {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
+        }
+        parseNetData(call, httpResponseListener, apiUrl);
+        return call;
+    }
+
+    public static <T> Call postAsync(String apiUrl, @HeaderMap Map<String, Object> headers, Object requestObj
+            , HttpResponseListener<T> httpResponseListener) {
+
+        if (headers == null) {
+            headers = new HashMap();
+        }
+
+        HttpHelper.HttpService httpService = getInstance().mRetrofit.create(HttpHelper.HttpService.class);
+        Call<ResponseBody> call = httpService.post(apiUrl, headers, requestObj);
+        if (L.isDebug) {
+            L.i("Post请求路径：" + sBaseUrl + apiUrl);
         }
         parseNetData(call, httpResponseListener, apiUrl);
         return call;
@@ -201,6 +219,9 @@ public final class HttpHelper<T> {
         @FormUrlEncoded
         @POST
         Call<ResponseBody> post(@Url String var1, @HeaderMap Map<String, String> var2, @FieldMap Map<String, Object> var3);
+
+        @POST
+        Call<ResponseBody> post(@Url String var1, @HeaderMap Map<String, String> var2, @Body Object entity);
 
         @Multipart
         @POST
