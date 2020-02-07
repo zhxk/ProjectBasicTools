@@ -16,8 +16,6 @@ import com.ks.projectbasictools.base.BaseActivity;
 import com.ks.projectbasictools.bean.NewsEntity;
 import com.ks.projectbasictools.constants.AppConstants;
 import com.ks.projectbasictools.retrofit.HttpResponseListener;
-import com.ks.projectbasictools.retrofit.Request;
-import com.ks.projectbasictools.retrofit.ServerHttp;
 import com.ks.projectbasictools.retrofit.ServerUtils;
 import com.ks.projectbasictools.utils.ToastKs;
 import com.ks.projectbasictools.utils.ToastUtil;
