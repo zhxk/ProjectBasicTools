@@ -9,9 +9,20 @@ public class ServerHttp {
     public ServerHttp() {
     }
 
-    public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu) {
+    /**
+     * 初始化
+     * @param context
+     * @param httpBaseUrl 基础请求链接
+     * @param httpResponseYu 请求返回预处理类——需重写
+     * @param isOpenCache 是否开启网络缓存，默认不开启（建议不开启）
+     */
+    public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu,boolean isOpenCache) {
         HttpHelper.setBaseUrl(context, httpBaseUrl);
         HttpHelper.setHttpResponseYu(httpResponseYu);
+        HttpHelper.setOpenCache(isOpenCache);
+    }
+    public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu) {
+        init(context, httpBaseUrl, httpResponseYu, false);
     }
 
     public static <T> Call getAsync(String apiUrl, HttpResponseListener<T> httpResponseListener) {

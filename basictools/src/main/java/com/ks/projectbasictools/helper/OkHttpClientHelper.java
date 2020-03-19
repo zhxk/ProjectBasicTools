@@ -33,13 +33,15 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class OkHttpClientHelper {
     private OkHttpClient okHttpClient;
     private static Context sContext;
+    private static boolean mIsOpenCache;
 
     private OkHttpClientHelper() {
         init();
     }
 
-    public static OkHttpClientHelper getInstance(Context context) {
-        sContext=context;
+    public static OkHttpClientHelper getInstance(Context context, boolean isOpenCache) {
+        mIsOpenCache = isOpenCache;
+        sContext = context;
         return OkHttpClientHolder.instance;
     }
 
@@ -74,31 +76,33 @@ public class OkHttpClientHelper {
                     }
                 });
 
-        //添加Cache拦截器，有网时添加到缓存中，无网时取出缓存
-        File file = FileUtils.getInstance().getCacheFolder();
-        Cache cache=new Cache(file,1024*1024*100);
-        builder.cache(cache).addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                if (!NetworkUtils.isNetworkConnected(sContext)){
-                    Request newRequest = request.newBuilder()
-                            .cacheControl(CacheControl.FORCE_CACHE)
-                            .build();
+        if (mIsOpenCache) {
+            //添加Cache拦截器，有网时添加到缓存中，无网时取出缓存
+            File file = FileUtils.getInstance().getCacheFolder();
+            Cache cache=new Cache(file,1024*1024*100);
+            builder.cache(cache).addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request request = chain.request();
+                    if (!NetworkUtils.isNetworkConnected(sContext)){
+                        Request newRequest = request.newBuilder()
+                                .cacheControl(CacheControl.FORCE_CACHE)
+                                .build();
 
-                    return chain.proceed(newRequest);
-                } else{
-                    int maxTime =24*60*60;
-                    Response response=chain.proceed(request);
-                    Response newResponse = response.newBuilder()
-                            .header("Cache-Control","public, only-if-cached, max-stale="+maxTime)
-                            .removeHeader("Progma")
-                            .build();
+                        return chain.proceed(newRequest);
+                    } else{
+                        int maxTime =24*60*60;
+                        Response response=chain.proceed(request);
+                        Response newResponse = response.newBuilder()
+                                .header("Cache-Control","public, only-if-cached, max-stale="+maxTime)
+                                .removeHeader("Progma")
+                                .build();
 
-                    return newResponse;
+                        return newResponse;
+                    }
                 }
-            }
-        });
+            });
+        }
 
         okHttpClient=builder.build();
     }

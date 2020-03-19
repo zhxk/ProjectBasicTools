@@ -39,10 +39,15 @@ public final class HttpHelper<T> {
     private final Retrofit mRetrofit;
     private static String sBaseUrl;
     private static HttpResponseYu mHttpResponseYu;
+    private static boolean mIsOpenCache = false;//是否开启缓存
 
     public static void setBaseUrl(Context context, String baseUrl) {
         mContext = context;
         sBaseUrl = baseUrl;
+    }
+
+    public static void setOpenCache(boolean isOpenCache) {
+        mIsOpenCache = isOpenCache;
     }
 
     public static String getBaseUrl() {
@@ -60,7 +65,7 @@ public final class HttpHelper<T> {
         } else {
             this.mRetrofit = builder
                     .baseUrl(getBaseUrl())
-                    .client(OkHttpClientHelper.getInstance(mContext).getOkHttpClient())
+                    .client(OkHttpClientHelper.getInstance(mContext, mIsOpenCache).getOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

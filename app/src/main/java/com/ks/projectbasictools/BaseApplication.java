@@ -19,7 +19,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        /*带缓存网络请求 初始化*/
+        /*不带缓存网络请求 初始化*/
         ServerHttp.init(this, AppConstants.HTTP.BASE_URL, new HttpCacheResponse());
         ServerHttp.setDebug(true);
 
