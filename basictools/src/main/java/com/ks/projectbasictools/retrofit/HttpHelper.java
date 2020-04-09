@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.ks.projectbasictools.helper.OkHttpClientHelper;
 import com.ks.projectbasictools.utils.JSONUtil;
+import com.ks.projectbasictools.utils.LogUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -137,7 +138,9 @@ public final class HttpHelper<T> {
         HttpHelper.HttpService httpService = getInstance().mRetrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> call = httpService.post(apiUrl, headers, requestObj);
         if (L.isDebug) {
-            L.i("Post请求路径：" + sBaseUrl + apiUrl);
+            Gson gson = new Gson();
+            String jsonString = JSONUtil.formatJSONString(gson.toJson(requestObj));
+            L.i("Post请求路径：" + sBaseUrl + apiUrl + "；\n请求参数：" + jsonString);
         }
         parseNetData(call, httpResponseListener, apiUrl);
         return call;
@@ -184,7 +187,7 @@ public final class HttpHelper<T> {
                     if (response.code() == 200) {
                         String json = response.body() != null ? (response.body()).string() : "";
                         if (L.isDebug) {
-                            L.i(call.request().method() + "请求路径：" + sBaseUrl + apiUrl + " \nresponse data:" + JSONUtil.formatJSONString(json));
+                            L.i(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + "，\nresponse data:" + JSONUtil.formatJSONString(json));
                         }
                         mHttpResponseYu.onResponse(mContext, response, json, httpResponseListener);
                         /*if (!String.class.equals(httpResponseListener.getType())) {
@@ -196,13 +199,13 @@ public final class HttpHelper<T> {
                         }*/
                     } else {
                         if (L.isDebug) {
-                            L.e(call.request().method() + "请求路径：" + sBaseUrl + apiUrl + ",错误码：" + response.code() + "\n错误信息：" + response.message());
+                            L.e(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + ",错误码：" + response.code() + "，错误信息：" + response.message());
                         }
                         mHttpResponseYu.onResponse(mContext, response, "", httpResponseListener);
                     }
                 } catch (Exception var6) {
                     if (L.isDebug) {
-                        L.e("请求路径：" + sBaseUrl + apiUrl + " \nHttp Exception:", var6.getMessage());
+                        L.e("请求路径：" + sBaseUrl + apiUrl + " Http Exception:", var6.getMessage());
                     }
                     httpResponseListener.onFailure(call, var6);
                 }
@@ -210,7 +213,7 @@ public final class HttpHelper<T> {
 
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 if (L.isDebug) {
-                    L.e("请求路径：" + apiUrl + " \nHttp Exception:", t.getMessage());
+                    L.e("请求路径：" + apiUrl + " Http Exception:", t.getMessage());
                 }
                 httpResponseListener.onFailure(call, t);
             }
