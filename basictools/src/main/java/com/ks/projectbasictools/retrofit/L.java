@@ -11,18 +11,18 @@ public class L {
 
     public static void i(String tag, String message) {
         if (isDebug) {
-            Log.i(tag, message);
+            Log.i(tag, message + "");
         }
 
     }
 
     public static void i(String message) {
-        i(TAG, message);
+        i(TAG, message + "");
     }
 
     public static void e(String tag, String message) {
         if (isDebug) {
-            Log.e(tag, message);
+            Log.e(tag, message + "");
         }
 
     }
@@ -33,7 +33,7 @@ public class L {
 
     public static void e(String tag, String message, Throwable e) {
         if (isDebug) {
-            Log.e(tag, message, e);
+            Log.e(tag, message + "", e);
         }
 
     }
@@ -43,7 +43,7 @@ public class L {
     }
 
     public static void e(Throwable e, String message) {
-        e(TAG, message, e);
+        e(TAG, message + "", e);
     }
 
     public static void e(Throwable e) {

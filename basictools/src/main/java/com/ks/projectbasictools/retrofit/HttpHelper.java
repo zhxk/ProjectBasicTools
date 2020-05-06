@@ -205,7 +205,7 @@ public final class HttpHelper<T> {
                     }
                 } catch (Exception var6) {
                     if (L.isDebug) {
-                        L.e("请求路径：" + sBaseUrl + apiUrl + " Http Exception:", var6.getMessage());
+                        L.e("请求路径：" + sBaseUrl + apiUrl + " Http Exception:", var6.getMessage() + "");
                     }
                     httpResponseListener.onFailure(call, var6);
                 }
@@ -213,7 +213,7 @@ public final class HttpHelper<T> {
 
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 if (L.isDebug) {
-                    L.e("请求路径：" + apiUrl + " Http Exception:", t.getMessage());
+                    L.e("请求路径：" + apiUrl + " Http Exception:", t.getMessage() + "");
                 }
                 httpResponseListener.onFailure(call, t);
             }
