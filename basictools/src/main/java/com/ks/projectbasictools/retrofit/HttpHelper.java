@@ -50,20 +50,20 @@ public final class HttpHelper<T> {
     private static HttpResponseYu mHttpResponseYu;
     private static boolean mUseCache = true;//是否开启缓存
 
-    public static void setBaseUrl(Context context, String baseUrl) {
+    public void setBaseUrl(Context context, String baseUrl) {
         mContext = context;
         sBaseUrl = baseUrl;
     }
 
-    public static void setOpenCache(boolean useCache) {
+    public void setOpenCache(boolean useCache) {
         mUseCache = useCache;
     }
 
-    public static String getBaseUrl() {
+    public String getBaseUrl() {
         return sBaseUrl;
     }
 
-    public static void setHttpResponseYu(HttpResponseYu mHttpResponseYu) {
+    public void setHttpResponseYu(HttpResponseYu mHttpResponseYu) {
         HttpHelper.mHttpResponseYu = mHttpResponseYu;
     }
 
@@ -110,7 +110,7 @@ public final class HttpHelper<T> {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
         }
-        parseEnhancedCall(call, httpResponseListener,apiUrl);
+        parseEnhancedCall(call, httpResponseListener, apiUrl);
         return call;
     }
 
@@ -132,7 +132,7 @@ public final class HttpHelper<T> {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
         }
-        parseEnhancedCall(call, httpResponseListener,apiUrl);
+        parseEnhancedCall(call, httpResponseListener, apiUrl);
         return call;
     }
 
@@ -148,7 +148,7 @@ public final class HttpHelper<T> {
             String jsonString = JSONUtil.formatJSONString(gson.toJson(requestObj));
             L.i("Post请求路径：" + sBaseUrl + apiUrl + "；\n请求参数：" + jsonString);
         }
-        parseEnhancedCall(call, httpResponseListener,apiUrl);
+        parseEnhancedCall(call, httpResponseListener, apiUrl);
         return call;
     }
 
@@ -187,17 +187,15 @@ public final class HttpHelper<T> {
     }
 
     private static <T> void parseEnhancedCall(Call<ResponseBody> call, HttpResponseListener<T> httpResponseListener, String apiUrl) {
-        //直接取缓存数据
-        requestCache(call, httpResponseListener);
         //请求网络数据
         EnhancedCall<ResponseBody> enhancedCall = new EnhancedCall<>(call);
         enhancedCall.setContext(mContext)
-                .useCache(mUseCache)/*默认支持缓存 可不设置*/
+                .useCache(mUseCache)/*默认支持缓存*/
                 .enqueue(new EnhancedCallback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         try {
-                            if (response.code() == 200) {
+                            if (response.isSuccessful()) {
                                 String json = response.body() != null ? (response.body()).string() : "";
                                 if (L.isDebug) {
                                     L.i(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + "，\nresponse data:" + JSONUtil.formatJSONString(json));
@@ -212,7 +210,7 @@ public final class HttpHelper<T> {
                                     mHttpResponseYu.onError(mContext, response.code(), response.message(), httpResponseListener);
                                     return;
                                 }
-                                if (requestCache(call,httpResponseListener)) return;
+                                requestCache(call, httpResponseListener);
                             }
                         } catch (Exception var6) {
                             if (L.isDebug) {
@@ -239,7 +237,7 @@ public final class HttpHelper<T> {
     /**
      * 说明：请求缓存
      */
-    private static <T>  boolean requestCache(Call<ResponseBody> call, HttpResponseListener<T> httpResponseListener) {
+    private static <T> void requestCache(Call<ResponseBody> call, HttpResponseListener<T> httpResponseListener) {
         okhttp3.Request request = call.request();
         String url = request.url().toString();
         RequestBody requestBody = request.body();
@@ -266,14 +264,10 @@ public final class HttpHelper<T> {
             L.i("get cache->" + cache);
         }
         if (!TextUtils.isEmpty(cache)) {
-            T obj = new Gson().fromJson(cache, httpResponseListener.getType());
-            if (obj != null) {
-                httpResponseListener.onResponse(obj, true);
-                return true;
-            }
+            mHttpResponseYu.onGetCache(mContext, cache, httpResponseListener);
+            return;
         }
-        mHttpResponseYu.onError(mContext, -1, "没有缓存数据哦", httpResponseListener);
-        return false;
+        mHttpResponseYu.onError(mContext, -1, "没有缓存数据", httpResponseListener);
     }
 
     public interface HttpService<T> {

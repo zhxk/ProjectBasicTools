@@ -1,6 +1,8 @@
 package com.ks.projectbasictools.override;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.google.gson.Gson;
 import com.ks.projectbasictools.retrofit.HttpResponseListener;
@@ -13,17 +15,19 @@ import retrofit2.Response;
 public class HttpCacheResponse<T> extends HttpResponseYu {
     @Override
     public void onResponse(Context mContext, Response response, String json, HttpResponseListener listener) {
-        if (response.code() == 200) {
+        if (response.isSuccessful()) {
             if (!String.class.equals(listener.getType())) {
                 Gson gson = new Gson();
                 T t = gson.fromJson(json, listener.getType());
-                listener.onResponse(t,false);
+                new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(t,false));
             } else {
-                listener.onResponse(response,false);
+                new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(response,false));
             }
         } else {
-            ToastUtil.show(mContext, "错误码：" + response.code() + "；错误信息：" + response.message());
-            listener.onError(response.code(), response.message());
+            new Handler(Looper.getMainLooper()).post(() -> {
+                ToastUtil.show(mContext, "错误码：" + response.code() + "；错误信息：" + response.message());
+                listener.onError(response.code(), response.message());
+            });
         }
     }
 
@@ -32,19 +36,25 @@ public class HttpCacheResponse<T> extends HttpResponseYu {
         if (!String.class.equals(listener.getType())) {
             Gson gson = new Gson();
             T t = gson.fromJson(json, listener.getType());
-            listener.onResponse(t,true);
+            new Handler(Looper.getMainLooper()).post(() -> listener.onResponse(t,true));
         }
     }
 
     @Override
     public void onError(Context mContext, int errCode, String errMsg, HttpResponseListener httpResponseListener) {
-        ToastUtil.show(mContext, "错误码：" + errCode + "；错误信息：" + errMsg);
-        httpResponseListener.onError(errCode, errMsg);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (errCode != -1) {//筛选掉 无缓存数据的提示信息
+                ToastUtil.show(mContext, "错误码：" + errCode + "；错误信息：" + errMsg);
+            }
+            httpResponseListener.onError(errCode, errMsg);
+        });
     }
 
     @Override
     public void onFailure(Context mContext, Call call, Throwable e, HttpResponseListener httpResponseListener) {
-        ToastUtil.show(mContext, "错误信息：" + e.getMessage());
-        httpResponseListener.onFailure(call, e);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            ToastUtil.show(mContext, "错误信息：" + e.getMessage());
+            httpResponseListener.onFailure(call, e);
+        });
     }
 }
