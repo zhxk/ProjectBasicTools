@@ -3,6 +3,7 @@ package com.ks.projectbasictools.retrofit;
 import android.content.Context;
 
 import java.util.Map;
+
 import retrofit2.Call;
 
 public class ServerHttp {
@@ -11,26 +12,28 @@ public class ServerHttp {
 
     /**
      * 初始化
+     *
      * @param context
-     * @param httpBaseUrl 基础请求链接
+     * @param httpBaseUrl    基础请求链接
      * @param httpResponseYu 请求返回预处理类——需重写
-     * @param isOpenCache 是否开启网络缓存，默认不开启（建议不开启）
+     * @param useCache       是否开启网络缓存，默认开启。支持get、post请求方式
      */
-    public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu,boolean isOpenCache) {
+    public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu, boolean useCache) {
         HttpHelper.setBaseUrl(context, httpBaseUrl);
         HttpHelper.setHttpResponseYu(httpResponseYu);
-        HttpHelper.setOpenCache(isOpenCache);
+        HttpHelper.setOpenCache(useCache);
     }
+
     public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu) {
         init(context, httpBaseUrl, httpResponseYu, false);
     }
 
     public static <T> Call getAsync(String apiUrl, HttpResponseListener<T> httpResponseListener) {
-        return HttpHelper.getAsync(apiUrl, (Map)null, (Map)null, httpResponseListener);
+        return HttpHelper.getAsync(apiUrl, (Map) null, (Map) null, httpResponseListener);
     }
 
     public static <T> Call postAsync(String apiUrl, HttpResponseListener<T> httpResponseListener) {
-        return HttpHelper.postAsync(apiUrl, (Map)null, (Map)null, httpResponseListener);
+        return HttpHelper.postAsync(apiUrl, (Map) null, (Map) null, httpResponseListener);
     }
 
     public static <T> Call send(Request request, HttpResponseListener<T> httpResponseListener) {
@@ -67,5 +70,9 @@ public class ServerHttp {
 
     public static void setDebug(boolean isDebug) {
         L.isDebug = isDebug;
+    }
+
+    public static void setUseCache(boolean useCache) {
+        HttpHelper.setOpenCache(useCache);
     }
 }

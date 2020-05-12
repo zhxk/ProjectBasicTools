@@ -2,26 +2,18 @@ package com.ks.projectbasictools.helper;
 
 import android.content.Context;
 
+import com.ks.projectbasictools.retrofit_cache.EnhancedCacheInterceptor;
 import com.ks.projectbasictools.constants.AppConstants;
-import com.ks.projectbasictools.utils.FileUtils;
-import com.ks.projectbasictools.utils.NetworkUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
-import okhttp3.CacheControl;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
@@ -33,14 +25,14 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class OkHttpClientHelper {
     private OkHttpClient okHttpClient;
     private static Context sContext;
-    private static boolean mIsOpenCache;
+    private static boolean mUseCache;
 
     private OkHttpClientHelper() {
         init();
     }
 
-    public static OkHttpClientHelper getInstance(Context context, boolean isOpenCache) {
-        mIsOpenCache = isOpenCache;
+    public static OkHttpClientHelper getInstance(Context context, boolean useCache) {
+        mUseCache = useCache;
         sContext = context;
         return OkHttpClientHolder.instance;
     }
@@ -56,7 +48,7 @@ public class OkHttpClientHelper {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.addInterceptor(loggingInterceptor);
-
+        builder.addInterceptor(new EnhancedCacheInterceptor(sContext));
         //基本设置
         builder.readTimeout(AppConstants.READ_TIME, TimeUnit.SECONDS)
                 .writeTimeout(AppConstants.WRITE_TIME, TimeUnit.SECONDS)
@@ -75,26 +67,25 @@ public class OkHttpClientHelper {
                         return cookies != null ? cookies : new ArrayList<Cookie>();
                     }
                 });
-
-        if (mIsOpenCache) {
+        /*if (mUseCache) {
             //添加Cache拦截器，有网时添加到缓存中，无网时取出缓存
             File file = FileUtils.getInstance().getCacheFolder();
-            Cache cache=new Cache(file,1024*1024*100);
+            Cache cache = new Cache(file, 1024 * 1024 * 100);
             builder.cache(cache).addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Request request = chain.request();
-                    if (!NetworkUtils.isNetworkConnected(sContext)){
+                    if (!NetworkUtils.isNetworkConnected(sContext)) {
                         Request newRequest = request.newBuilder()
                                 .cacheControl(CacheControl.FORCE_CACHE)
                                 .build();
 
                         return chain.proceed(newRequest);
-                    } else{
-                        int maxTime =24*60*60;
-                        Response response=chain.proceed(request);
+                    } else {
+                        int maxTime = 24 * 60 * 60;
+                        Response response = chain.proceed(request);
                         Response newResponse = response.newBuilder()
-                                .header("Cache-Control","public, only-if-cached, max-stale="+maxTime)
+                                .header("Cache-Control", "public, only-if-cached, max-stale=" + maxTime)
                                 .removeHeader("Progma")
                                 .build();
 
@@ -102,16 +93,15 @@ public class OkHttpClientHelper {
                     }
                 }
             });
-        }
-
-        okHttpClient=builder.build();
+        }*/
+        okHttpClient = builder.build();
     }
 
     private static class OkHttpClientHolder {
         private static OkHttpClientHelper instance = new OkHttpClientHelper();
     }
 
-    public OkHttpClient getOkHttpClient(){
+    public OkHttpClient getOkHttpClient() {
         return okHttpClient;
     }
 }

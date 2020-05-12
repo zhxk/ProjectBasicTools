@@ -14,6 +14,9 @@ import com.ks.projectbasictools.utils.LogUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+
 public class HttpObjectCacheActivity extends BaseActivity {
 
     @Override
@@ -31,8 +34,20 @@ public class HttpObjectCacheActivity extends BaseActivity {
         request.putHeaderMap(headerMap);
         ServerHttp.sendJson(request, new requestObj(), new HttpResponseListener<BaseEntity>() {
             @Override
-            public void onResponse(BaseEntity var1) {
-                LogUtils.e("sllslsls");
+            public void onResponse(BaseEntity var1, boolean isCache) {
+                LogUtils.e("sllslslso   onResponse，isCache：" + isCache);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable e) {
+                super.onFailure(call, e);
+                LogUtils.e("sllslslso   onError");
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+                super.onError(code, msg);
+                LogUtils.e("sllslslso   onError");
             }
         });
 

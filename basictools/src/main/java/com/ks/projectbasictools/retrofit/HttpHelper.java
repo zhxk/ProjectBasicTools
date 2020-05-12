@@ -5,17 +5,25 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.ks.projectbasictools.helper.OkHttpClientHelper;
+import com.ks.projectbasictools.retrofit_cache.CacheManager;
+import com.ks.projectbasictools.retrofit_cache.EnhancedCall;
+import com.ks.projectbasictools.retrofit_cache.EnhancedCallback;
 import com.ks.projectbasictools.utils.JSONUtil;
 import com.ks.projectbasictools.utils.LogUtils;
+import com.ks.projectbasictools.utils.NetworkUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.Buffer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,15 +48,15 @@ public final class HttpHelper<T> {
     private final Retrofit mRetrofit;
     private static String sBaseUrl;
     private static HttpResponseYu mHttpResponseYu;
-    private static boolean mIsOpenCache = false;//是否开启缓存
+    private static boolean mUseCache = true;//是否开启缓存
 
     public static void setBaseUrl(Context context, String baseUrl) {
         mContext = context;
         sBaseUrl = baseUrl;
     }
 
-    public static void setOpenCache(boolean isOpenCache) {
-        mIsOpenCache = isOpenCache;
+    public static void setOpenCache(boolean useCache) {
+        mUseCache = useCache;
     }
 
     public static String getBaseUrl() {
@@ -66,7 +74,7 @@ public final class HttpHelper<T> {
         } else {
             this.mRetrofit = builder
                     .baseUrl(getBaseUrl())
-                    .client(OkHttpClientHelper.getInstance(mContext, mIsOpenCache).getOkHttpClient())
+                    .client(OkHttpClientHelper.getInstance(mContext, mUseCache).getOkHttpClient())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
@@ -102,7 +110,7 @@ public final class HttpHelper<T> {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
         }
-        parseNetData(call, httpResponseListener, apiUrl);
+        parseEnhancedCall(call, httpResponseListener,apiUrl);
         return call;
     }
 
@@ -124,17 +132,15 @@ public final class HttpHelper<T> {
                 L.i("请求参数：" + k + ":" + paramMap.get(k) + "\n");
             }
         }
-        parseNetData(call, httpResponseListener, apiUrl);
+        parseEnhancedCall(call, httpResponseListener,apiUrl);
         return call;
     }
 
     public static <T> Call postAsync(String apiUrl, @HeaderMap Map<String, Object> headers, Object requestObj
             , HttpResponseListener<T> httpResponseListener) {
-
         if (headers == null) {
             headers = new HashMap();
         }
-
         HttpHelper.HttpService httpService = getInstance().mRetrofit.create(HttpHelper.HttpService.class);
         Call<ResponseBody> call = httpService.post(apiUrl, headers, requestObj);
         if (L.isDebug) {
@@ -142,7 +148,7 @@ public final class HttpHelper<T> {
             String jsonString = JSONUtil.formatJSONString(gson.toJson(requestObj));
             L.i("Post请求路径：" + sBaseUrl + apiUrl + "；\n请求参数：" + jsonString);
         }
-        parseNetData(call, httpResponseListener, apiUrl);
+        parseEnhancedCall(call, httpResponseListener,apiUrl);
         return call;
     }
 
@@ -180,44 +186,94 @@ public final class HttpHelper<T> {
         return model;
     }
 
-    private static <T> void parseNetData(Call<ResponseBody> call, final HttpResponseListener<T> httpResponseListener, String apiUrl) {
-        call.enqueue(new Callback<ResponseBody>() {
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    if (response.code() == 200) {
-                        String json = response.body() != null ? (response.body()).string() : "";
-                        if (L.isDebug) {
-                            L.i(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + "，\nresponse data:" + JSONUtil.formatJSONString(json));
+    private static <T> void parseEnhancedCall(Call<ResponseBody> call, HttpResponseListener<T> httpResponseListener, String apiUrl) {
+        //直接取缓存数据
+        requestCache(call, httpResponseListener);
+        //请求网络数据
+        EnhancedCall<ResponseBody> enhancedCall = new EnhancedCall<>(call);
+        enhancedCall.setContext(mContext)
+                .useCache(mUseCache)/*默认支持缓存 可不设置*/
+                .enqueue(new EnhancedCallback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            if (response.code() == 200) {
+                                String json = response.body() != null ? (response.body()).string() : "";
+                                if (L.isDebug) {
+                                    L.i(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + "，\nresponse data:" + JSONUtil.formatJSONString(json));
+                                }
+                                mHttpResponseYu.onResponse(mContext, response, json, httpResponseListener);
+                            } else {
+                                if (!mUseCache || NetworkUtils.isNetworkConnected(mContext)) {
+                                    //不使用缓存 或者网络可用 的情况下直接回调onFailure
+                                    if (L.isDebug) {
+                                        L.e(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + ",错误码：" + response.code() + "，错误信息：" + response.message());
+                                    }
+                                    mHttpResponseYu.onError(mContext, response.code(), response.message(), httpResponseListener);
+                                    return;
+                                }
+                                if (requestCache(call,httpResponseListener)) return;
+                            }
+                        } catch (Exception var6) {
+                            if (L.isDebug) {
+                                L.e("请求路径：" + sBaseUrl + apiUrl + " Http Exception:", var6.getMessage() + "");
+                            }
+                            mHttpResponseYu.onFailure(mContext, call, var6, httpResponseListener);
                         }
-                        mHttpResponseYu.onResponse(mContext, response, json, httpResponseListener);
-                        /*if (!String.class.equals(httpResponseListener.getType())) {
-                            Gson gson = new Gson();
-                            T t = gson.fromJson(json, httpResponseListener.getType());
-                            mHttpResponseYu.onResponse(mContext, response.code(), response.message(), t, httpResponseListener);
-                        } else {
-                            mHttpResponseYu.onResponse(mContext, response.code(), response.message(), json, httpResponseListener);
-                        }*/
-                    } else {
-                        if (L.isDebug) {
-                            L.e(call.request().method() + "返回路径：" + sBaseUrl + apiUrl + ",错误码：" + response.code() + "，错误信息：" + response.message());
-                        }
-                        mHttpResponseYu.onResponse(mContext, response, "", httpResponseListener);
                     }
-                } catch (Exception var6) {
-                    if (L.isDebug) {
-                        L.e("请求路径：" + sBaseUrl + apiUrl + " Http Exception:", var6.getMessage() + "");
-                    }
-                    httpResponseListener.onFailure(call, var6);
-                }
-            }
 
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                if (L.isDebug) {
-                    L.e("请求路径：" + apiUrl + " Http Exception:", t.getMessage() + "");
-                }
-                httpResponseListener.onFailure(call, t);
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        LogUtils.d("onError->" + t.getMessage());
+                        httpResponseListener.onFailure(call, t);
+                    }
+
+                    @Override
+                    public void onGetCache(String cacheJson) {
+                        mHttpResponseYu.onGetCache(mContext, cacheJson, httpResponseListener);
+                        LogUtils.d("onGetCache" + cacheJson);
+                    }
+                });
+    }
+
+    /**
+     * 说明：请求缓存
+     */
+    private static <T>  boolean requestCache(Call<ResponseBody> call, HttpResponseListener<T> httpResponseListener) {
+        okhttp3.Request request = call.request();
+        String url = request.url().toString();
+        RequestBody requestBody = request.body();
+        Charset charset = Charset.forName("UTF-8");
+        StringBuilder sb = new StringBuilder();
+        sb.append(url);
+        if (request.method().equals("POST")) {
+            MediaType contentType = requestBody.contentType();
+            if (contentType != null) {
+                charset = contentType.charset(Charset.forName("UTF-8"));
             }
-        });
+            Buffer buffer = new Buffer();
+            try {
+                requestBody.writeTo(buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            sb.append(buffer.readString(charset));
+            buffer.close();
+        }
+
+        String cache = CacheManager.getInstance(mContext).getCache(sb.toString());
+        if (L.isDebug) {
+            L.i("get cache->" + cache);
+        }
+        if (!TextUtils.isEmpty(cache)) {
+            T obj = new Gson().fromJson(cache, httpResponseListener.getType());
+            if (obj != null) {
+                httpResponseListener.onResponse(obj, true);
+                return true;
+            }
+        }
+        mHttpResponseYu.onError(mContext, -1, "没有缓存数据哦", httpResponseListener);
+        return false;
     }
 
     public interface HttpService<T> {

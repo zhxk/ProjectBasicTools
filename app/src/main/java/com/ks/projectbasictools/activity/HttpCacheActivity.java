@@ -77,7 +77,7 @@ public class HttpCacheActivity extends BaseActivity {
         map.put("key", "value");*/
         ServerUtils.requestGet(AppConstants.HTTP.NEWS, null, new HttpResponseListener<NewsEntity>() {
             @Override
-            public void onResponse(NewsEntity newsEntity) {
+            public void onResponse(NewsEntity newsEntity, boolean isCache) {
                 //请求成功
                 getDataSuccess(newsEntity.getStories());
             }

@@ -20,7 +20,7 @@ public abstract class HttpResponseListener<T> {
         return this.getClass();
     }
 
-    public abstract void onResponse(T var1);
+    public abstract void onResponse(T var1, boolean isCache);
 
     public void onFailure(Call<ResponseBody> call, Throwable e) {
     }

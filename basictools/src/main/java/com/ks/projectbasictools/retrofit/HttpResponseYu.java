@@ -3,6 +3,7 @@ package com.ks.projectbasictools.retrofit;
 import android.content.Context;
 
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 
 /**
@@ -13,4 +14,10 @@ import retrofit2.Response;
 public abstract class HttpResponseYu<T> {
     public abstract void onResponse(Context mContext, Response<ResponseBody> response
             , String json, HttpResponseListener<T> listener);
+
+    public void onError(Context mContext, int errCode, String errMsg, HttpResponseListener<T> httpResponseListener) {}
+
+    public void onGetCache(Context mContext, String json, HttpResponseListener<T> listener) {}
+
+    public void onFailure(Context mContext, Call<ResponseBody> call, Throwable e, HttpResponseListener<T> listener) {}
 }

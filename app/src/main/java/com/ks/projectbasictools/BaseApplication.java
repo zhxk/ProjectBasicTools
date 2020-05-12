@@ -1,6 +1,7 @@
 package com.ks.projectbasictools;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.ks.projectbasictools.constants.AppConstants;
 import com.ks.projectbasictools.okhttp.OkHttpUtils;
@@ -19,8 +20,9 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        /*不带缓存网络请求 初始化*/
+        /*缓存网络请求 初始化*/
         ServerHttp.init(this, AppConstants.HTTP.BASE_URL, new HttpCacheResponse());
+        ServerHttp.setUseCache(true);//开启使用 无网络时，加载缓存数据
         ServerHttp.setDebug(true);
 
         /*无缓存网络请求 初始化*/

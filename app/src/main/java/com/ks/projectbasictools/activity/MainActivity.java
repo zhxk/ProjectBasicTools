@@ -36,4 +36,8 @@ public class MainActivity extends BaseActivity {
     public void startHttpAct(View view) {
         startAct(this, HttpActivity.class);
     }
+
+    public void startBugAct(View view) {
+        startAct(this, BugActivity.class);
+    }
 }
