@@ -75,13 +75,13 @@ public final class CacheManager {
             os.flush();
             editor.commit();
             mDiskLruCache.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (os != null) {
                 try {
                     os.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
