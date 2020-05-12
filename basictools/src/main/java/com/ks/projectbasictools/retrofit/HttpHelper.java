@@ -50,20 +50,20 @@ public final class HttpHelper<T> {
     private static HttpResponseYu mHttpResponseYu;
     private static boolean mUseCache = true;//是否开启缓存
 
-    public void setBaseUrl(Context context, String baseUrl) {
+    public static void setBaseUrl(Context context, String baseUrl) {
         mContext = context;
         sBaseUrl = baseUrl;
     }
 
-    public void setOpenCache(boolean useCache) {
+    public static void setOpenCache(boolean useCache) {
         mUseCache = useCache;
     }
 
-    public String getBaseUrl() {
+    public static String getBaseUrl() {
         return sBaseUrl;
     }
 
-    public void setHttpResponseYu(HttpResponseYu mHttpResponseYu) {
+    public static void setHttpResponseYu(HttpResponseYu mHttpResponseYu) {
         HttpHelper.mHttpResponseYu = mHttpResponseYu;
     }
 

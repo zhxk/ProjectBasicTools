@@ -19,9 +19,9 @@ public class ServerHttp {
      * @param useCache       是否开启网络缓存，默认开启。支持get、post请求方式
      */
     public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu, boolean useCache) {
-        HttpHelper.getInstance().setBaseUrl(context, httpBaseUrl);
-        HttpHelper.getInstance().setHttpResponseYu(httpResponseYu);
-        HttpHelper.getInstance().setOpenCache(useCache);
+        HttpHelper.setBaseUrl(context, httpBaseUrl);
+        HttpHelper.setHttpResponseYu(httpResponseYu);
+        HttpHelper.setOpenCache(useCache);
     }
 
     public static <T> void init(Context context, String httpBaseUrl, HttpResponseYu<T> httpResponseYu) {
@@ -43,11 +43,6 @@ public class ServerHttp {
     }
 
     public static <T> Call sendJson(Request request, Object requestObj, HttpResponseListener<T> httpResponseListener) {
-        return sendJson(request, requestObj, httpResponseListener, true);
-    }
-
-    public static <T> Call sendJson(Request request, Object requestObj, HttpResponseListener<T> httpResponseListener, boolean useCache) {
-        HttpHelper.getInstance().setOpenCache(useCache);
         return RequestMethod.GET.equals(request.getRequestMethod()) ?
                 HttpHelper.getAsync(request.getApiUlr(), request.getHeaderMap(), request.getParamsMap(), httpResponseListener)
                 : HttpHelper.postAsync(request.getApiUlr(), request.getHeaderMap(), requestObj, httpResponseListener);
@@ -78,6 +73,6 @@ public class ServerHttp {
     }
 
     public static void setUseCache(boolean useCache) {
-        HttpHelper.getInstance().setOpenCache(useCache);
+        HttpHelper.setOpenCache(useCache);
     }
 }
